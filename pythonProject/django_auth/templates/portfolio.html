@@ -9,6 +9,7 @@
 <div>
     <div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="dynamic-graph.js"></script>
         <canvas id="myChart"></canvas>
     </div>
     <label for="user-input">Enter your text:</label><br>
@@ -16,6 +17,8 @@
     <input type="text" id="user-input" name="userInput"><br>
     <input type="text" id="user-input2" name="userInput"><br>
     <input type="text" id="user-input3" name="userInput"><br>
+
+
     <input type="submit" value="Submit" onclick="updateChart()">
     <input type="text" id="label1" value=""><br>
     <input type="text" id="label2" value=""><br>
@@ -52,27 +55,20 @@
             const userInput3 = document.getElementById("user-input3").value;
 
             chart.data.labels = [
-               document.getElementById('label1').value,
+                document.getElementById('label1').value,
                 document.getElementById('label2').value,
                 document.getElementById('label3').value
             ];
 
-            // Update the chart data
+// Update the chart data
             chart.data.datasets[0].data = [userInput, userInput2, userInput3];
 
-
-
-
-
+            chart.update();
         }
-        chart.update();
     </script>
 
 </div>
 
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="dynamic-graph.js"></script>
 
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
@@ -80,7 +76,7 @@
 </form>
 {% else %}
 <p>You are not logged in</p>
-<p><a href="{% url 'signup' %}">Sign up</a></p>
-<p><a href="{% url 'login' %}">Log In</a></p>
+<p><a target=_blank href="{% url 'signup' %}">Sign up</a></p>
+<p><a target=_blank href="{% url 'login' %}">Log In</a></p>
 {% endif %}
 {% endblock %}
