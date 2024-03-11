@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<p>Hi {{ user.username }} welcome to you portfolio !</p>
+<div>
+    <div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <canvas id="myChart"></canvas>
+    </div>
+    <label for="user-input">Enter your text:</label><br>
+
+    <input type="text" id="user-input" name="userInput"><br>
+    <input type="text" id="user-input2" name="userInput"><br>
+    <input type="text" id="user-input3" name="userInput"><br>
+    <input type="submit" value="Submit" onclick="updateChart()">
+    <input type="text" id="label1" value=""><br>
+    <input type="text" id="label2" value=""><br>
+    <input type="text" id="label3" value=""><br>
+    <input type="submit" value="Submit" onclick="updateChart()">
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        const defaultData = [0, 0, 0];
+
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Company 1', 'Company 2', 'Company 3'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: defaultData,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateChart() {
+
+            const userInput = document.getElementById("user-input").value;
+            const userInput2 = document.getElementById("user-input2").value;
+            const userInput3 = document.getElementById("user-input3").value;
+
+            chart.data.labels = [
+               document.getElementById('label1').value,
+                document.getElementById('label2').value,
+                document.getElementById('label3').value
+            ];
+
+            // Update the chart data
+            chart.data.datasets[1].data = [userInput, userInput2, userInput3];
+
+
+
+
+
+        }
+        chart.update();
+    </script>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="dynamic-graph.js"></script>
+
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Log Out</button>
+</form>
+{% else %}
+<p>You are not logged in</p>
+<p><a href="{% url 'signup' %}">Sign up</a></p>
+<p><a href="{% url 'login' %}">Log In</a></p>
+{% endif %}
+{% endblock %}
