@@ -4,17 +4,17 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<p>Hi {{ user.username }}!</p>
-p><a href="{% url 'portfolio' %}">Password Change</a></p>
-<p><a href="{% url 'password_change' %}">Password Change</a></p>
+<p>Bonjour {{ user.username }}!</p>
+<a href="{% url 'portfolio' %}">Portfolio</a></p>
+<p><a href="{% url 'password_change' %}">Changer de mot de passe</a></p>
 <form action="{% url 'logout' %}" method="post">
   {% csrf_token %}
   <button type="submit">Log Out</button>
 </form>
 {% else %}
-<p>You are not logged in</p>
-<p><a href="{% url 'signup' %}">Sign up</a></p>
+<p>Connectez-vous</p>
+<p><a href="{% url 'signup' %}">Créer un compte</a></p>
 
-<p><a href="{% url 'login' %}">Log In</a></p>
+<p><a href="{% url 'login' %}">Se connecter</a></p>
 {% endif %}
 {% endblock %}
