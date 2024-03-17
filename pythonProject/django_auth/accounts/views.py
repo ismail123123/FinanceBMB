@@ -43,9 +43,9 @@ def delete_data(request):
     if request.method == 'POST' and request.is_ajax():
         company_name = request.POST.get('company_name')
         value = request.POST.get('value')
-        # Get the Portfolio object to delete based on company name and value
+
         portfolio = get_object_or_404(Portfolio, company_name=company_name, value=value)
-        # Delete the Portfolio object
+
         portfolio.delete()
         return JsonResponse({'message': 'Data deleted successfully'}, status=200)
     else:
