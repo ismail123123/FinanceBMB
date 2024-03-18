@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
 
         <canvas id="myChart" width="400" height="250"></canvas>
         <script>
@@ -47,44 +47,44 @@
 
         </script>
 
-    </div>
+        </div>
 
 
-</div>
-<div class="row mt-5 justify-content-center">
-    <div class="col-md-4 mt-2">
-        <h4>Bienvenue sur votre portoflio</h4>
-        <hr>
+        </div>
+        <div class="row mt-5 justify-content-center">
+        <div class="col-md-4 mt-2">
+            <h4>Bienvenue sur votre portflio</h4>
+            <hr>
 
-        <form action="" method="POST">
-            {% csrf_token %}
+            <form action="" method="POST">
+                {% csrf_token %}
 
-            {{ form }}
+                {{ form }}
 
-            <input class="btn btn-success mt-2" type="submit" value="Add Data">
+                <input class="btn btn-success mt-2" type="submit" value="Add Data">
 
-        </form>
+            </form>
 
-    </div>
+        </div>
 
-    <div class="col-md-8">
-   {% for portfolio in portfolios %}
-<div>
-    <span>{{ portfolio.company_name }}</span>
-    <span>{{ portfolio.value }}</span>
-    <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
-        {% csrf_token %}
-        <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
-        <input type="hidden" name="value" value="{{ portfolio.value }}">
-        <button type="submit">Delete</button>
-    </form>
-</div>
-{% endfor %}
-<p><a href="{% url 'home' %}">Home</a></p>
+        <div class="col-md-8">
+        {% for portfolio in portfolios %}
+            <div>
+                <span>{{ portfolio.company_name }}</span>
+                <span>{{ portfolio.value }}</span>
+                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+                    <input type="hidden" name="value" value="{{ portfolio.value }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        {% endfor %}
+        <p><a href="{% url 'home' %}">Home</a></p>
 
-{% else %}
-<p>You are not logged in</p>
-<p><a target=_blank href="{% url 'signup' %}">Sign up</a></p>
-<p><a target=_blank href="{% url 'login' %}">Log In</a></p>
-{% endif %}
+    {% else %}
+        <p>You are not logged in</p>
+        <p><a target=_blank href="{% url 'signup' %}">Sign up</a></p>
+        <p><a target=_blank href="{% url 'login' %}">Log In</a></p>
+    {% endif %}
 {% endblock %}
