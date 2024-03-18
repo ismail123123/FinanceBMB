@@ -7,10 +7,10 @@ from django.views.generic import DeleteView
 
 class Portfolio(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=100,blank=False,null=False)
+    company_name = models.CharField(max_length=100, blank=False, null=False)
     value = models.FloatField()
+    shares = models.FloatField()
+
 
     def __str__(self):
         return f'{self.company_name} - {self.value}'
-
-

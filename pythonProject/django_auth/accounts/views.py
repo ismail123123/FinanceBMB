@@ -12,6 +12,8 @@ from .forms import ProductForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Portfolio
+import yfinance as yf
+
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
@@ -21,11 +23,15 @@ class SignUpView(generic.CreateView):
 def portfolio(request):
 
    portfolios = Portfolio.objects.filter(user=request.user)
+
    if request.method == 'POST':
        form = ProductForm(request.POST)
        if form.is_valid():
            form.instance.user = request.user
+
+
            form.save()
+
            return redirect('portfolio')
    else:
        form = ProductForm()
@@ -33,6 +39,7 @@ def portfolio(request):
 
       "portfolios": portfolios,
       "form" : form
+
    }
    return render(request, 'portfolio.html', context)
 
@@ -49,5 +56,4 @@ def delete_data(request):
         portfolio.delete()
 
         return redirect('portfolio')
-    else:
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+
