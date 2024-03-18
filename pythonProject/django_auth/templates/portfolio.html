@@ -1,106 +1,90 @@
-    {% extends "base.html" %}
+{% extends "base.html" %}
 
-    {% block content %}
-        {% if user.is_authenticated %}
-            <div class="row mt-5">
-                <div class="col-md-4 mt-2">
-                    <h4>Bienvenue sur votre portoflio</h4>
-                    <hr>
+{% block content %}
+{% if user.is_authenticated %}
 
-                    <form action="" method="POST">
-                        {% csrf_token %}
+        <canvas id="myChart" width="400" height="250"></canvas>
+        <script>
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for portfolio in portofolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
+                    datasets: [{
+                        label: '# of Products',
+                        data: [{% for portfolio in portofolios %} {{ portfolio.value }}, {% endfor %}],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)',
+                            'rgba(240, 120, 50, 0.8)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(240, 120, 50, 1)',
 
-                        {{ form }}
-
-                        <input class="btn btn-success mt-2" type="submit" value="Add Data">
-
-                    </form>
-
-                </div>
-
-                <div class="col-md-8">
-                    <canvas id="myChart" width="400" height="250"></canvas>
-                    <script>
-                        var ctx = document.getElementById('myChart').getContext('2d');
-                        var myChart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: [{% for portfolio in portofolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
-                                datasets: [{
-                                    label: '# of Products',
-                                    data: [{% for portfolio in portofolios %} {{ portfolio.value }}, {% endfor %}],
-                                    backgroundColor: [
-                                        'rgba(255, 99, 132, 0.8)',
-                                        'rgba(54, 162, 235, 0.8)',
-                                        'rgba(255, 206, 86, 0.8)',
-                                        'rgba(75, 192, 192, 0.8)',
-                                        'rgba(153, 102, 255, 0.8)',
-                                        'rgba(255, 159, 64, 0.8)',
-                                        'rgba(240, 120, 50, 0.8)',
-                                    ],
-                                    borderColor: [
-                                        'rgba(255, 99, 132, 1)',
-                                        'rgba(54, 162, 235, 1)',
-                                        'rgba(255, 206, 86, 1)',
-                                        'rgba(75, 192, 192, 1)',
-                                        'rgba(153, 102, 255, 1)',
-                                        'rgba(255, 159, 64, 1)',
-                                        'rgba(240, 120, 50, 1)',
-
-                                    ],
-                                    borderWidth: 2
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-
-                        function deleteChart(companyName) {
-                            // Send AJAX request to delete data
-                            $.ajax({
-                                type: "POST",
-                                url: "{% url 'delete_data' %}",
-                                data: {
-                                    'company_name': companyName,
-                                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                                },
-                                success: function (response) {
-                                    console.log(response);
-                                    // Reload the page to update the chart
-                                    location.reload();
-                                },
-                                error: function (xhr, errmsg, err) {
-                                    console.log(xhr.status + ": " + xhr.responseText);
-                                }
-                            });
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
-                    </script>
-
-                </div>
-
-
-            </div>
+                    }
+                }
+            });
 
 
+        </script>
 
-    {% for portfolio in portofolios %}
-                <div>
-                    <span>{{ portfolio.company_name }}</span>
-                    <span>{{ portfolio.value }}</span>
-                    <button class="delete-btn" data-company-name="{{ portfolio.company_name }}" data-value="{{ portfolio.value }}">Delete</button>
-                </div>
-            {% endfor %}
+    </div>
 
 
+</div>
+<div class="row mt-5 justify-content-center">
+    <div class="col-md-4 mt-2">
+        <h4>Bienvenue sur votre portoflio</h4>
+        <hr>
 
-        {% else %}
-            <p>You are not logged in</p>
-            <p><a target=_blank href="{% url 'signup' %}">Sign up</a></p>
-            <p><a target=_blank href="{% url 'login' %}">Log In</a></p>
-        {% endif %}
-    {% endblock %}
+        <form action="" method="POST">
+            {% csrf_token %}
+
+            {{ form }}
+
+            <input class="btn btn-success mt-2" type="submit" value="Add Data">
+
+        </form>
+
+    </div>
+
+    <div class="col-md-8">
+   {% for portfolio in portofolios %}
+<div>
+    <span>{{ portfolio.company_name }}</span>
+    <span>{{ portfolio.value }}</span>
+    <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+        <input type="hidden" name="value" value="{{ portfolio.value }}">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+{% endfor %}
+<p><a href="{% url 'home' %}">Home</a></p>
+
+{% else %}
+<p>You are not logged in</p>
+<p><a target=_blank href="{% url 'signup' %}">Sign up</a></p>
+<p><a target=_blank href="{% url 'login' %}">Log In</a></p>
+{% endif %}
+{% endblock %}

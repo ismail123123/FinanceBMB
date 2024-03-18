@@ -40,13 +40,14 @@ def portfolio(request):
 
 
 def delete_data(request):
-    if request.method == 'POST' and request.is_ajax():
+    if request.method == 'POST' :
         company_name = request.POST.get('company_name')
         value = request.POST.get('value')
 
-        portfolio = get_object_or_404(Portfolio, company_name=company_name, value=value)
+        portofolio = get_object_or_404(Portfolio, company_name=company_name, value=value)
 
-        portfolio.delete()
-        return JsonResponse({'message': 'Data deleted successfully'}, status=200)
+        portofolio.delete()
+
+        return redirect('portfolio')
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
