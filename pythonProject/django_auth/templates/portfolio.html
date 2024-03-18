@@ -9,10 +9,10 @@
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: [{% for portfolio in portofolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
+                    labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
                     datasets: [{
                         label: '# of Products',
-                        data: [{% for portfolio in portofolios %} {{ portfolio.value }}, {% endfor %}],
+                        data: [{% for portfolio in portfolios %} {{ portfolio.value }}, {% endfor %}],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.8)',
                             'rgba(54, 162, 235, 0.8)',
@@ -68,7 +68,7 @@
     </div>
 
     <div class="col-md-8">
-   {% for portfolio in portofolios %}
+   {% for portfolio in portfolios %}
 <div>
     <span>{{ portfolio.company_name }}</span>
     <span>{{ portfolio.value }}</span>

@@ -20,7 +20,7 @@ class SignUpView(generic.CreateView):
 
 def portfolio(request):
 
-   portofolios = Portfolio.objects.filter(user=request.user)
+   portfolios = Portfolio.objects.filter(user=request.user)
    if request.method == 'POST':
        form = ProductForm(request.POST)
        if form.is_valid():
@@ -31,7 +31,7 @@ def portfolio(request):
        form = ProductForm()
    context = {
 
-      "portofolios": portofolios,
+      "portfolios": portfolios,
       "form" : form
    }
    return render(request, 'portfolio.html', context)
@@ -44,9 +44,9 @@ def delete_data(request):
         company_name = request.POST.get('company_name')
         value = request.POST.get('value')
 
-        portofolio = get_object_or_404(Portfolio, company_name=company_name, value=value)
+        portfolio = get_object_or_404(Portfolio, company_name=company_name, value=value)
 
-        portofolio.delete()
+        portfolio.delete()
 
         return redirect('portfolio')
     else:
