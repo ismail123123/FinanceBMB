@@ -57,3 +57,4 @@ def delete_data(request):
 
         return redirect('portfolio')
 
+def getdata(request):
