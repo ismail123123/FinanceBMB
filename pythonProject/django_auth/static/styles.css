@@ -34,6 +34,13 @@ body {
 
 }
 
+body {
+    background-image: url("image-fond-ecran-aquarelle-bleu-acier-clair.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
 .title {
     color: blue; /* Change la couleur du titre */
     border-bottom: 2px solid black; /* Ajoute une ligne en dessous */

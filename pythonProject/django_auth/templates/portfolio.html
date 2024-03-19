@@ -91,25 +91,25 @@
         </script>
         <div class="row mt-5 justify-content-center">
             <div class="col-md-4 mt-2">
-                <h4>Bienvenue sur votre portflio</h4>
+                <h4 class="text-center">Bienvenue sur votre portflio</h4>
                 <hr>
                 <form action="" method="POST">
                     {% csrf_token %}
                     {{ form }}
-                    <input class="btn btn-success mt-2" type="submit" value="Add Data">
+                    <input class="btn btn-success mt-2" type="submit" value="Ajouter un actif">
                 </form>
             </div>
         <div class="row mt-5 justify-content-center">
             <div class="col-md-4 mt-2">
-                <h4>Vos données</h4>
+                <h4 class="text-center">Vos données</h4>
                 <hr>
 
                 </form>
             </div>
             <p>    </p>
-            <div class="col-md-8">
+            <div class="col-md-8 text-center">
                 {% for portfolio in portfolios %}
-                    <div>
+                    <div class="my-1">
                         <span>{{ portfolio.company_name }}</span>
                         <span>{{ portfolio.value }}</span>
                         <span>{{ portfolio.shares }}</span>
@@ -117,16 +117,16 @@
                             {% csrf_token %}
                             <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
                             <input type="hidden" name="value" value="{{ portfolio.value }}">
-                            <button type="submit">Delete</button>
+                            <button type="submit">Supprimer</button>
                         </form>
                     </div>
                 {% endfor %}
-                <p><a href="{% url 'home' %}">Home</a></p>
+                <p><a href="{% url 'home' %}">Accueil</a></p>
             </div>
         </div>
     {% else %}
-        <p>You are not logged in</p>
-        <p><a target=_blank href="{% url 'signup' %}">Sign up</a></p>
-        <p><a target=_blank href="{% url 'login' %}">Log In</a></p>
+        <p>Vous n'êtes pas connecté</p>
+        <p><a target=_blank href="{% url 'signup' %}">Créer un compte</a></p>
+        <p><a target=_blank href="{% url 'login' %}">Se connecter</a></p>
     {% endif %}
 {% endblock %}
