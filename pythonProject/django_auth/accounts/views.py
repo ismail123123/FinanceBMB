@@ -35,10 +35,19 @@ def portfolio(request):
            return redirect('portfolio')
    else:
        form = ProductForm()
+
+   data = {}
+   for portfolio in portfolios:
+       company_name = portfolio.company_name
+       ticker = yf.Ticker(company_name)
+       current_price = ticker.history(period="1d")["Close"].iloc[-1]
+       data[company_name] = current_price
+
    context = {
 
       "portfolios": portfolios,
-      "form" : form
+      "form" : form,
+       "data": data
 
    }
    return render(request, 'portfolio.html', context)
@@ -57,4 +66,4 @@ def delete_data(request):
 
         return redirect('portfolio')
 
-def getdata(request):
+
