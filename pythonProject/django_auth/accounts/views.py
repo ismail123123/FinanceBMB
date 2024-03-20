@@ -13,7 +13,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Portfolio
 import yfinance as yf
-
+from django.shortcuts import get_list_or_404
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
@@ -35,25 +35,33 @@ def portfolio(request):
            return redirect('portfolio')
    else:
        form = ProductForm()
+
+
+   for portfolio in portfolios:
+
+       company_name = portfolio.company_name
+       ticker = yf.Ticker(company_name)
+       current_price = ticker.history(period="1d")["Close"].iloc[-1]
+       setattr(portfolio, 'current_price', current_price)
+
    context = {
 
       "portfolios": portfolios,
-      "form" : form
+      "form" : form,
 
    }
    return render(request, 'portfolio.html', context)
 
 
-
-
 def delete_data(request):
-    if request.method == 'POST' :
+    if request.method == 'POST':
         company_name = request.POST.get('company_name')
         value = request.POST.get('value')
 
-        portfolio = get_object_or_404(Portfolio, company_name=company_name, value=value)
-
-        portfolio.delete()
+        portfolios = get_list_or_404(Portfolio, company_name=company_name, value=value)
+        for portfolio in portfolios:
+            portfolio.delete()
 
         return redirect('portfolio')
+
 

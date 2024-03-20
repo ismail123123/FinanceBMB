@@ -36,7 +36,6 @@
                             'rgba(153, 102, 255, 1)',
                             'rgba(255, 159, 64, 1)',
                             'rgba(240, 120, 50, 1)',
-
                         ],
                         borderWidth: 2
                     }]
@@ -75,7 +74,6 @@
                             'rgba(153, 102, 255, 1)',
                             'rgba(255, 159, 64, 1)',
                             'rgba(240, 120, 50, 1)',
-
                         ],
                         borderWidth: 2
                     }]
@@ -89,6 +87,7 @@
                 }
             });
         </script>
+
         <div class="row mt-5 justify-content-center">
             <div class="col-md-4 mt-2">
                 <h4 class="text-center">Bienvenue sur votre portflio</h4>
@@ -99,30 +98,52 @@
                     <input class="btn btn-success mt-2" type="submit" value="Ajouter un actif">
                 </form>
             </div>
-        <div class="row mt-5 justify-content-center">
             <div class="col-md-4 mt-2">
                 <h4 class="text-center">Vos données</h4>
                 <hr>
-
+               <table class="table">
+    <thead>
+        <tr>
+            <th>Nom de la compagnie</th>
+            <th>Prix de l'action</th>
+            <th>Coût d'ajustement</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for portfolio in portfolios %}
+        <tr>
+            <td>{{ portfolio.company_name }}</td>
+            <td>{{ portfolio.current_price }}</td>
+            <td><span id="product_{{ forloop.counter }}">{{ portfolio.adjustment_cost }}</span>$</td> <
+            <td>
+                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+                    <input type="hidden" name="value" value="{{ portfolio.value }}">
+                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
+                        Supprimer
+                    </button>
                 </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
             </div>
-            <p>    </p>
-            <div class="col-md-8 text-center">
-                {% for portfolio in portfolios %}
-                    <div class="my-1">
-                        <span>{{ portfolio.company_name }}</span>
-                        <span>{{ portfolio.value }}</span>
-                        <span>{{ portfolio.shares }}</span>
-                        <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
-                            <input type="hidden" name="value" value="{{ portfolio.value }}">
-                            <button type="submit">Supprimer</button>
-                        </form>
-                    </div>
-                {% endfor %}
-                <p><a href="{% url 'home' %}">Accueil</a></p>
-            </div>
+        </div>
+
+
+        <script>
+
+            {% for portfolio in portfolios %}
+                var product_{{ forloop.counter }} = {{ portfolio.value }} * {{ portfolio.shares }};
+                document.getElementById("product_{{ forloop.counter }}").textContent = product_{{ forloop.counter }};
+            {% endfor %}
+        </script>
+
+        <p><a target=_blank href="{% url 'home' %}">Home</a></p>
         </div>
     {% else %}
         <p>Vous n'êtes pas connecté</p>
