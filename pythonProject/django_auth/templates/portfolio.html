@@ -101,38 +101,36 @@
             <div class="col-md-4 mt-2">
                 <h4 class="text-center">Vos données</h4>
                 <hr>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Nom de la compagnie</th>
-                        <th>Prix de l'action</th>
-                        <th>Coût d'ajustement</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for portfolio in portfolios %}
-                        <tr>
-                            <td>{{ portfolio.company_name }}</td>
-                            <td>{{ data|default:"N/A" }}</td>
-                            <td><span id="product_{{ forloop.counter }}"></span>$</td>
-                            <td>
+               <table class="table">
+    <thead>
+        <tr>
+            <th>Nom de la compagnie</th>
+            <th>Prix de l'action</th>
+            <th>Coût d'ajustement</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for portfolio in portfolios %}
+        <tr>
+            <td>{{ portfolio.company_name }}</td>
+            <td>{{ portfolio.current_price }}</td>
+            <td><span id="product_{{ forloop.counter }}">{{ portfolio.adjustment_cost }}</span>$</td> <
+            <td>
+                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+                    <input type="hidden" name="value" value="{{ portfolio.value }}">
+                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
+                        Supprimer
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-
-                                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
-                                    <input type="hidden" name="value" value="{{ portfolio.value }}">
-                                    <button type="submit"
-                                            style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
-                                        Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
             </div>
         </div>
 

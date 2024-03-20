@@ -37,22 +37,17 @@ def portfolio(request):
        form = ProductForm()
 
 
-   data = {}
-
-   i = 0
    for portfolio in portfolios:
 
        company_name = portfolio.company_name
        ticker = yf.Ticker(company_name)
        current_price = ticker.history(period="1d")["Close"].iloc[-1]
-       data[company_name] = current_price
-       i = i + 1
+       setattr(portfolio, 'current_price', current_price)
 
    context = {
 
       "portfolios": portfolios,
       "form" : form,
-       "data": data
 
    }
    return render(request, 'portfolio.html', context)
