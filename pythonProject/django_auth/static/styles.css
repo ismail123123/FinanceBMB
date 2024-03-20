@@ -40,10 +40,3 @@ body {
     background-position: center;
     background-attachment: fixed;
 }
-
-.title {
-    color: blue; /* Change la couleur du titre */
-    border-bottom: 2px solid black; /* Ajoute une ligne en dessous */
-    padding-bottom: 10px; /* Espace entre le texte et la ligne */
-    margin-bottom: 20px; /* Espace en dessous de la ligne */
-}
