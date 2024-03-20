@@ -103,21 +103,49 @@
                 <hr>
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Nom de la compagnie</th>
-                            <th>Prix de l'action</th>
-                        </tr>
+                    <tr>
+                        <th>Nom de la compagnie</th>
+                        <th>Prix de l'action</th>
+                        <th>Coût d'ajustement</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for portfolio in portfolios %}
-                            <tr>
-                                <td>{{ portfolio.company_name }}</td>
-                                <td>{{ data|default:"N/A" }}</td>
-                            </tr>
-                        {% endfor %}
+                    {% for portfolio in portfolios %}
+                        <tr>
+                            <td>{{ portfolio.company_name }}</td>
+                            <td>{{ data|default:"N/A" }}</td>
+                            <td><span id="product_{{ forloop.counter }}"></span>$</td>
+                            <td>
+
+
+                                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+                                    <input type="hidden" name="value" value="{{ portfolio.value }}">
+                                    <button type="submit"
+                                            style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
+        </div>
+
+
+        <script>
+
+            {% for portfolio in portfolios %}
+                var product_{{ forloop.counter }} = {{ portfolio.value }} * {{ portfolio.shares }};
+                document.getElementById("product_{{ forloop.counter }}").textContent = product_{{ forloop.counter }};
+            {% endfor %}
+        </script>
+
+        <p><a target=_blank href="{% url 'home' %}">Home</a></p>
         </div>
     {% else %}
         <p>Vous n'êtes pas connecté</p>
