@@ -4,59 +4,66 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
 
-    <div class="container">
+        <div class="container">
 
-        <p>Bonjour {{ user.username }}!</p>
-        <p><a href="{% url 'portfolio' %}">Portfolio</a></p>
-        <p><a href="{% url 'password_change' %}">Changer de mot de passe</a></p>
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Déconnexion</button>
-        </form>
-    </div>
-{% else %}
-    <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
+            <p>Bonjour {{ user.username }}!</p>
+            <p><a href="{% url 'portfolio' %}">Portfolio</a></p>
+            <p><a href="{% url 'password_change' %}">Changer de mot de passe</a></p>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Déconnexion</button>
+            </form>
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
 
-.button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-}
+            <form action="{% url 'search_results' %}" method="get">
+                <input name="q" type="text" placeholder="Search...">
+            </form>
 
-.button:hover {
-    background-color: #45a049;
-}
 
-.box {
-    height: 20px;
-    width: 100px;
-    background-color: red;
+        </div>
+    {% else %}
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
 
-}</style>
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .button {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+
+            .button:hover {
+                background-color: #45a049;
+            }
+
+            .box {
+                height: 20px;
+                width: 100px;
+                background-color: red;
+
+            }</style>
         <p>Connectez-vous</p>
-        <div class ="box"></div>
-        <p divclass = "button"><a href="{% url 'signup' %}">Créer un compte</a></p>
+        <div class="box"></div>
+        <p divclass="button"><a href="{% url 'signup' %}">Créer un compte</a></p>
         <p><a href="{% url 'login' %}">Se connecter</a></p>
 
-{% endif %}
+    {% endif %}
 {% endblock %}
