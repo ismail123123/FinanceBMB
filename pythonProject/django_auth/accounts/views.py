@@ -82,7 +82,7 @@ def search_company(request):
             history = company.history(period='1d')
 
 
-            return render(request, 'search_result.html', {'company': company, 'history': history,'df_list': df_list})
+        return render(request, 'search_result.html', {'company': company, 'history': history})
     else:
 
         form = CompanySearchForm()
