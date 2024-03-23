@@ -10,6 +10,6 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("", TemplateView.as_view(template_name="accueil.html"), name="home"),
     path("portfolio/", include('accounts.urls')),
-
+    path("search_company/", include('accounts.urls')),
 
 ]

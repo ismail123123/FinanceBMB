@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
+   <p>Price: ${{ company.history.Close|last }}</p>
+
+    <a href = "{% url 'search_company' %}">Back</a>
+{% endblock %}

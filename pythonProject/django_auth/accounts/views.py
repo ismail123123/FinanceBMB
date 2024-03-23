@@ -7,13 +7,21 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, HttpResponseRedirect
 from django import forms
 from django.shortcuts import render, HttpResponseRedirect
-from . models import Portfolio
+from yfinance import Ticker
+
+from .models import Portfolio
 from .forms import ProductForm
+from .forms import CompanySearchForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Portfolio
+from .models import Compagny
 import yfinance as yf
 from django.shortcuts import get_list_or_404
+import json
+import pandas as pd
+import pandas_datareader as data
+
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
@@ -21,36 +29,36 @@ class SignUpView(generic.CreateView):
 
 
 def portfolio(request):
+    portfolios = Portfolio.objects.filter(user=request.user)
 
-   portfolios = Portfolio.objects.filter(user=request.user)
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.instance.user = request.user
 
-   if request.method == 'POST':
-       form = ProductForm(request.POST)
-       if form.is_valid():
-           form.instance.user = request.user
+            form.save()
 
+            return redirect('portfolio')
+    else:
+        form = ProductForm()
 
-           form.save()
+    for portfolio in portfolios:
 
-           return redirect('portfolio')
-   else:
-       form = ProductForm()
+        company_name = portfolio.company_name
 
+        try:
+            ticker = yf.Ticker(company_name)
+            current_price = ticker.history(period="1d")["Close"].iloc[-1]
+            setattr(portfolio, 'current_price', current_price)
+        except:
+            setattr(portfolio, 'current_price', "Données non disponibles")
+    context = {
 
-   for portfolio in portfolios:
+        "portfolios": portfolios,
+        "form": form,
 
-       company_name = portfolio.company_name
-       ticker = yf.Ticker(company_name)
-       current_price = ticker.history(period="1d")["Close"].iloc[-1]
-       setattr(portfolio, 'current_price', current_price)
-
-   context = {
-
-      "portfolios": portfolios,
-      "form" : form,
-
-   }
-   return render(request, 'portfolio.html', context)
+    }
+    return render(request, 'portfolio.html', context)
 
 
 def delete_data(request):
@@ -65,3 +73,18 @@ def delete_data(request):
         return redirect('portfolio')
 
 
+def search_company(request):
+    if request.method == 'POST':
+        form = CompanySearchForm(request.POST)
+        if form.is_valid():
+            company_name = form.cleaned_data['company_name']
+            company = Ticker(company_name)
+            history = company.history(period='1d')
+
+
+            return render(request, 'search_result.html', {'company': company, 'history': history,'df_list': df_list})
+    else:
+
+        form = CompanySearchForm()
+        company = "Company not found"
+    return render(request, 'search_company.html', {'company': company, 'form': form})

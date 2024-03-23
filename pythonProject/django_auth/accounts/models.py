@@ -14,3 +14,9 @@ class Portfolio(models.Model):
 
     def __str__(self):
         return f'{self.company_name} - {self.value}'
+
+class Compagny(models.Model):
+  name = models.CharField(max_length=100, blank=False, null=False)
+
+
+

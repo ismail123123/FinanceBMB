@@ -1,6 +1,6 @@
 from django import forms
 from .models import Portfolio
-
+from yfinance import Ticker
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -13,3 +13,14 @@ class ProductForm(forms.ModelForm):
 
 
         }
+
+class CompanySearchForm(forms.Form):
+    company_name = forms.CharField(label='Company Name', max_length=100)
+
+    def clean_company_name(self):
+        company_name = self.cleaned_data['company_name']
+        try:
+            Ticker(company_name)
+        except Exception as e:
+            raise forms.ValidationError(f"Invalid company name: {e}")
+        return company_name
