@@ -22,8 +22,22 @@ import json
 import pandas as pd
 import pandas_datareader as data
 
+
+class UserCreationFormWithEmail(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    def save(self, commit=True):
+        user = super(UserCreationFormWithEmail, self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+
+        if commit:
+            user.save()
+
+        return user
+
+
 class SignUpView(generic.CreateView):
-    form_class = UserCreationForm
+    form_class = UserCreationFormWithEmail
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
@@ -80,7 +94,6 @@ def search_company(request):
             company_name = form.cleaned_data['company_name']
             company = Ticker(company_name)
             history = company.history(period='1d')
-
 
         return render(request, 'search_result.html', {'company': company, 'history': history})
     else:

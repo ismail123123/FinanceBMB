@@ -8,8 +8,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),  # new
     path("accounts/", include("django.contrib.auth.urls")),
-    path("", include("accounts.urls"), name="home"),
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("portfolio/", include('accounts.urls')),
     path("search_company/", include('accounts.urls')),
 
 ]
+
+

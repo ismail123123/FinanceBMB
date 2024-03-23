@@ -11,7 +11,7 @@
         <p>Bonjour {{ user.username }}!</p>
         <p><a href="{% url 'portfolio' %}">Portfolio</a></p>
          <p><a href="{% url 'search_company' %}">Search</a></p>
-        <p><a href="{% url 'password_change' %}">Changer de mot de passe</a></p>
+        <p><a href="{% url 'password_reset' %}">Changer de mot de passe</a></p>
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Déconnexion</button>
