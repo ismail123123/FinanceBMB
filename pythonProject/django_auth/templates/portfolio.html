@@ -101,11 +101,13 @@
             <div class="col-md-4 mt-2">
                 <h4 class="text-center">Vos données</h4>
                 <hr>
-               <table class="table">
+      <table class="table">
     <thead>
         <tr>
             <th>Nom de la compagnie</th>
             <th>Prix de l'action</th>
+            <th>Nombre de parts</th>
+            <th>Prix total actuel</th>
             <th>Coût d'ajustement</th>
             <th></th>
         </tr>
@@ -115,7 +117,9 @@
         <tr>
             <td>{{ portfolio.company_name }}</td>
             <td>{{ portfolio.current_price }}</td>
-            <td><span id="product_{{ forloop.counter }}">{{ portfolio.adjustment_cost }}</span>$</td> <
+            <td>{{ portfolio.shares }}</td> <!-- Nouvelle colonne pour le nombre de parts -->
+            <td><span id="product_current_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le prix total actuel -->
+            <td><span id="product_adjustment_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le coût d'ajustement -->
             <td>
                 <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
                     {% csrf_token %}
@@ -130,18 +134,21 @@
         {% endfor %}
     </tbody>
 </table>
+<script>
+    {% for portfolio in portfolios %}
+        var current_price_{{ forloop.counter }} = {{ portfolio.current_price }};
+        var value_{{ forloop.counter }} = {{ portfolio.value }};
+        var shares_{{ forloop.counter }} = {{ portfolio.shares }};
 
-            </div>
-        </div>
+        // Calcul du prix total actuel
+        var product_current_{{ forloop.counter }} = current_price_{{ forloop.counter }} * shares_{{ forloop.counter }};
+        document.getElementById("product_current_{{ forloop.counter }}").textContent = product_current_{{ forloop.counter }};
 
-
-        <script>
-
-            {% for portfolio in portfolios %}
-                var product_{{ forloop.counter }} = {{ portfolio.value }} * {{ portfolio.shares }};
-                document.getElementById("product_{{ forloop.counter }}").textContent = product_{{ forloop.counter }};
-            {% endfor %}
-        </script>
+        // Calcul du coût d'ajustement
+        var product_adjustment_{{ forloop.counter }} = value_{{ forloop.counter }} * shares_{{ forloop.counter }};
+        document.getElementById("product_adjustment_{{ forloop.counter }}").textContent = product_adjustment_{{ forloop.counter }};
+    {% endfor %}
+</script>
 
         <p><a target=_blank href="{% url 'home' %}">Home</a></p>
         </div>
