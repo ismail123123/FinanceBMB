@@ -1,8 +1,29 @@
 {% extends 'base.html' %}
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% block content %}
     <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
-   <p>Price: ${{ company.history.Close|last }}</p>
+    <p>Price: ${{ company.history.Close|last }}</p>
+    <canvas id="chart"></canvas>
 
-    <a href = "{% url 'search_company' %}">Back</a>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var historyData = {{ history.to_json|safe }};
+            var dates = Object.keys(historyData);
+            var prices = Object.values(historyData);
+
+            var ctx = document.getElementById('chart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Stock price',
+                        data: prices,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false
+                    }]
+                }
+            });
+        });
+    </script>
 {% endblock %}

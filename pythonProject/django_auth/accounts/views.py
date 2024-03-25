@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DeleteView
@@ -19,6 +18,9 @@ from .models import Compagny
 import yfinance as yf
 from django.shortcuts import get_list_or_404
 import json
+import pandas as pd
+import pandas_datareader as data
+import requests
 
 
 class UserCreationFormWithEmail(UserCreationForm):
@@ -89,15 +91,16 @@ def search_company(request):
     if request.method == 'POST':
         form = CompanySearchForm(request.POST)
         if form.is_valid():
+            data = []
             company_name = form.cleaned_data['company_name']
+
             company = Ticker(company_name)
-            history = company.history(period='1d')["Close"].iloc[-1]
+            history = company.history(period='1y')
+
             context = {
                 'company': company,
+
                 'history': history
-
-
-
             }
         return render(request, 'search_result.html', context)
     else:
