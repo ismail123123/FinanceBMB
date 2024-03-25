@@ -109,6 +109,7 @@
             <th>Nombre de parts</th>
             <th>Prix total actuel</th>
             <th>Coût d'ajustement</th>
+            <th>Rendement</th>
             <th></th>
         </tr>
     </thead>
@@ -117,9 +118,11 @@
         <tr>
             <td>{{ portfolio.company_name }}</td>
             <td>{{ portfolio.current_price }}</td>
-            <td>{{ portfolio.shares }}</td> <!-- Nouvelle colonne pour le nombre de parts -->
+            <td>{{ portfolio.shares }}</td>
+           <!-- Nouvelle colonne pour le nombre de parts -->
             <td><span id="product_current_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le prix total actuel -->
             <td><span id="product_adjustment_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le coût d'ajustement -->
+            <td><span id="rendement_{{ forloop.counter }}"></span>%</td>
             <td>
                 <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
                     {% csrf_token %}
@@ -147,6 +150,8 @@
         // Calcul du coût d'ajustement
         var product_adjustment_{{ forloop.counter }} = value_{{ forloop.counter }} * shares_{{ forloop.counter }};
         document.getElementById("product_adjustment_{{ forloop.counter }}").textContent = product_adjustment_{{ forloop.counter }};
+          var rendement_{{ forloop.counter }} = (value_{{ forloop.counter }}/ current_price_{{ forloop.counter }}) * 100;
+        document.getElementById("rendement_{{ forloop.counter }}").textContent = rendement_{{ forloop.counter }};
     {% endfor %}
 </script>
 

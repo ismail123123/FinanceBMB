@@ -21,7 +21,6 @@ from django.shortcuts import get_list_or_404
 import json
 
 
-
 class UserCreationFormWithEmail(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -92,9 +91,15 @@ def search_company(request):
         if form.is_valid():
             company_name = form.cleaned_data['company_name']
             company = Ticker(company_name)
-            history = company.history(period='1d')
+            history = company.history(period='1d')["Close"].iloc[-1]
+            context = {
+                'company': company,
+                'history': history
 
-        return render(request, 'search_result.html', {'company': company, 'history': history})
+
+
+            }
+        return render(request, 'search_result.html', context)
     else:
 
         form = CompanySearchForm()
