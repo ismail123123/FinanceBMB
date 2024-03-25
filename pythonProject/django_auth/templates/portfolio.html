@@ -1,160 +1,168 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% if user.is_authenticated %}
-        <div class="row mt-5 justify-content-center">
-            <div class="col-md-6">
-                <canvas id="barChart" width="400" height="250"></canvas>
-            </div>
-            <div class="col-md-6">
-                <canvas id="doughnutChart" width="400" height="250"></canvas>
-            </div>
-        </div>
-        <script>
-            var ctx1 = document.getElementById('barChart').getContext('2d');
-            var barChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
-                    datasets: [{
-                        label: '# of Products',
-                        data: [{% for portfolio in portfolios %} {{ portfolio.value }}, {% endfor %}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)',
-                            'rgba(240, 120, 50, 0.8)',
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(240, 120, 50, 1)',
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            var ctx2 = document.getElementById('doughnutChart').getContext('2d');
-            var doughnutChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
-                    datasets: [{
-                        label: '# of Products',
-                        data: [{% for portfolio in portfolios %} {{ portfolio.shares }}, {% endfor %}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)',
-                            'rgba(240, 120, 50, 0.8)',
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(240, 120, 50, 1)',
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        </script>
-
-        <div class="row mt-5 justify-content-center">
-            <div class="col-md-4 mt-2">
-                <h4 class="text-center">Bienvenue sur votre portflio</h4>
-                <hr>
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    {{ form }}
-                    <input class="btn btn-success mt-2" type="submit" value="Ajouter un actif">
-                </form>
-            </div>
-            <div class="col-md-4 mt-2">
-                <h4 class="text-center">Vos données</h4>
-                <hr>
-      <table class="table">
-    <thead>
-        <tr>
-            <th>Nom de la compagnie</th>
-            <th>Prix de l'action</th>
-            <th>Nombre de parts</th>
-            <th>Prix total actuel</th>
-            <th>Coût d'ajustement</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for portfolio in portfolios %}
-        <tr>
-            <td>{{ portfolio.company_name }}</td>
-            <td>{{ portfolio.current_price }}</td>
-            <td>{{ portfolio.shares }}</td> <!-- Nouvelle colonne pour le nombre de parts -->
-            <td><span id="product_current_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le prix total actuel -->
-            <td><span id="product_adjustment_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le coût d'ajustement -->
-            <td>
-                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
-                    <input type="hidden" name="value" value="{{ portfolio.value }}">
-                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
-                        Supprimer
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% if user.is_authenticated %}
+<div class="row mt-5 justify-content-center">
+    <div class="col-md-6">
+        <canvas id="barChart" width="400" height="250"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="doughnutChart" width="400" height="250"></canvas>
+    </div>
+</div>
 <script>
-    {% for portfolio in portfolios %}
-        var current_price_{{ forloop.counter }} = {{ portfolio.current_price }};
-        var value_{{ forloop.counter }} = {{ portfolio.value }};
-        var shares_{{ forloop.counter }} = {{ portfolio.shares }};
+    var ctx1 = document.getElementById('barChart').getContext('2d');
+    var barChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
+            datasets: [{
+                label: '# of Products',
+                data: [{% for portfolio in portfolios %} {{ portfolio.value }}, {% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)',
+                    'rgba(240, 120, 50, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(240, 120, 50, 1)',
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
-        // Calcul du prix total actuel
-        var product_current_{{ forloop.counter }} = current_price_{{ forloop.counter }} * shares_{{ forloop.counter }};
-        document.getElementById("product_current_{{ forloop.counter }}").textContent = product_current_{{ forloop.counter }};
-
-        // Calcul du coût d'ajustement
-        var product_adjustment_{{ forloop.counter }} = value_{{ forloop.counter }} * shares_{{ forloop.counter }};
-        document.getElementById("product_adjustment_{{ forloop.counter }}").textContent = product_adjustment_{{ forloop.counter }};
-    {% endfor %}
+    var ctx2 = document.getElementById('doughnutChart').getContext('2d');
+    var doughnutChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
+            datasets: [{
+                label: '# of Products',
+                data: [{% for portfolio in portfolios %} {{ portfolio.shares }}, {% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)',
+                    'rgba(240, 120, 50, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(240, 120, 50, 1)',
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 </script>
 
-        <p><a target=_blank href="{% url 'home' %}">Home</a></p>
-        </div>
+<div class="row mt-5 justify-content-center">
+    <div class="col-md-4 mt-2">
+        <h4 class="text-center">Bienvenue sur votre portflio</h4>
+        <hr>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input class="btn btn-success mt-2" type="submit" value="Ajouter un actif">
+        </form>
+    </div>
+    <div class="col-md-4 mt-2">
+        <h4 class="text-center">Vos données</h4>
+        <hr>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Nom de la compagnie</th>
+                <th>Prix de l'action</th>
+                <th>Nombre de parts</th>
+                <th>Prix total actuel</th>
+                <th>Coût d'ajustement</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for portfolio in portfolios %}
+            <tr>
+                <td>{{ portfolio.company_name }}</td>
+                <td>{{ portfolio.current_price }}</td>
+                <td>{{ portfolio.shares }}</td> <!-- Nouvelle colonne pour le nombre de parts -->
+                <td><span id="product_current_{{ forloop.counter }}"></span></td>
+                <!-- Nouvelle colonne pour le prix total actuel -->
+                <td><span id="product_adjustment_{{ forloop.counter }}"></span></td>
+                <!-- Nouvelle colonne pour le coût d'ajustement -->
+                <td>
+                    <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+                        <input type="hidden" name="value" value="{{ portfolio.value }}">
+                        <button type="submit"
+                                style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
+                            Supprimer
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            {% for portfolio in portfolios %}
+                var current_price_{{ forloop.counter }} = {{ portfolio.current_price }};
+                var value_{{ forloop.counter }} = {{ portfolio.value }};
+                var shares_{{ forloop.counter }} = {{ portfolio.shares }};
+
+                // Calcul du prix total actuel
+                var product_current_{{ forloop.counter }} = current_price_{{ forloop.counter }} * shares_{{ forloop.counter }};
+                document.getElementById("product_current_{{ forloop.counter }}").textContent = product_current_{{ forloop.counter }};
+
+                // Calcul du coût d'ajustement
+                var product_adjustment_{{ forloop.counter }} = value_{{ forloop.counter }} * shares_{{ forloop.counter }};
+                document.getElementById("product_adjustment_{{ forloop.counter }}").textContent = product_adjustment_{{ forloop.counter }};
+            {% endfor %}
+        </script>
+    </div>
+
+    <!-- Affiche les liens en bas de la page -->
+    <div class="affichage-liens">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'search_company' %}">Chercher une compagnie</a>
+    </div>
+
     {% else %}
-        <p>Vous n'êtes pas connecté</p>
-        <p><a target=_blank href="{% url 'signup' %}">Créer un compte</a></p>
-        <p><a target=_blank href="{% url 'login' %}">Se connecter</a></p>
+    <p>Vous n'êtes pas connecté</p>
+    <p><a href="{% url 'signup' %}">Créer un compte</a></p>
+    <p><a href="{% url 'login' %}">Se connecter</a></p>
     {% endif %}
-{% endblock %}
+    {% endblock %}

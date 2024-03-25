@@ -4,16 +4,21 @@
 
 
 
-        <h2>Quelle compagnie voulez vous chercher ?</h2>
+        <h2>Quelle compagnie cherchez-vous?</h2>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Search</button>
+            <button type="submit">Chercher</button>
         </form>
 
+<div class="affichage-liens">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'portfolio' %}">Portfolio</a>
+    </div>
+
     {% else %}
-        <p>You are not logged in</p>
-        <p><a target="_blank" href="{% url 'signup' %}">Create an account</a></p>
-        <p><a target="_blank" href="{% url 'login' %}">Log in</a></p>
+        <p>Vous n'êtes pas connecté</p>
+        <p><a target="_blank" href="{% url 'signup' %}">Créer un compte</a></p>
+        <p><a target="_blank" href="{% url 'login' %}">Se connecter</a></p>
     {% endif %}
 {% endblock %}

@@ -4,5 +4,9 @@
     <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
    <p>Price: ${{ company.history.Close|last }}</p>
 
-    <a href = "{% url 'search_company' %}">Back</a>
+    <div class="affichage-liens", class="text-center">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'portfolio' %}">Portfolio</a>
+        <a href="{% url 'search_company' %}">Retour</a>
+    </div>
 {% endblock %}
