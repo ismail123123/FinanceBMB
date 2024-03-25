@@ -1,42 +1,40 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+.site-title {
+    color: blue;
+    font-family: 'Georgia', serif;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
+/*Affiche la section en bas de la page */
+.affichage-liens {
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+    position: absolute;
+
+    /*Centre la ligne du bas et les liens*/
+    left: 50%;
+    transform: translateX(-50%);
+
+    /*Mise en forme de la ligne*/
+    border-top: 2px solid #000;
+    bottom: 10px;
+    width: 85%;
+    padding-top: 10px;
 }
 
-.button:hover {
-    background-color: #45a049;
+.affichage-liens a {
+    text-align: center;
+    display: inline;
+    color: red;
+    margin: 0 20px;
 }
 
-.box {
-    height: 20px;
-    width: 100px;
-    background-color: red;
-
-}
-
+/*Mets une image en fond d'écran et centre les textes*/
 body {
-    background-image: url("image-fond-ecran-aquarelle-bleu-acier-clair.jpg");
+    background-image: url('/static/image-fond-ecran-aquarelle-bleu-acier-clair.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    position: relative;
+    min-height: 96vh;
 }
+
