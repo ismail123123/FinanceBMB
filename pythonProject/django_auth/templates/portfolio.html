@@ -154,8 +154,11 @@
         document.getElementById("rendement_{{ forloop.counter }}").textContent = rendement_{{ forloop.counter }};
     {% endfor %}
 </script>
-
-        <p><a target=_blank href="{% url 'home' %}">Home</a></p>
+<!-- Affiche les liens en bas de la page -->
+    <div class="affichage-liens">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'search_company' %}">Chercher une compagnie</a>
+    </div>
         </div>
     {% else %}
         <p>Vous n'êtes pas connecté</p>

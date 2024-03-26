@@ -5,30 +5,6 @@
     padding-bottom: 10px;
 }
 
-/*Affiche la section en bas de la page */
-.affichage-liens {
-    text-align: center;
-    position: fixed;
-
-    /*Centre la ligne du bas et les liens*/
-    left: 50%;
-    transform: translateX(-50%);
-
-    /*Mise en forme de la ligne*/
-    border-top: 2px solid #000;
-    bottom: 0px;
-    width: 85%;
-    padding-top: 10px;
-    z-index: 1000;
-}
-
-.affichage-liens a {
-    text-align: center;
-    display: inline;
-    color: red;
-    margin: 0 20px;
-}
-
 /*Mets une image en fond d'écran et centre les textes*/
 body {
     background-image: url('/static/image-fond-ecran-aquarelle-bleu-acier-clair.jpg');
@@ -37,5 +13,32 @@ body {
     background-attachment: fixed;
     position: relative;
     min-height: 96vh;
+    padding-bottom: 70px;
 }
+
+/*Affiche la section en bas de la page */
+.affichage-liens {
+    text-align: center;
+    position: absolute;
+
+    /*Centre la ligne du bas et les liens*/
+    left: 50%;
+    transform: translateX(-50%);
+
+    /*Mise en forme de la ligne*/
+    border-top: 2px solid #000;
+    bottom: 0px;
+    width: 80%;
+    padding-top: 10px;
+    padding-bottom : 10px;
+}
+
+.affichage-liens a{
+    text-align: center;
+    display: inline;
+    color: blue;
+    margin: 0 20px;
+}
+
+
 
