@@ -8,7 +8,7 @@
 /*Affiche la section en bas de la page */
 .affichage-liens {
     text-align: center;
-    position: absolute;
+    position: fixed;
 
     /*Centre la ligne du bas et les liens*/
     left: 50%;
@@ -16,9 +16,10 @@
 
     /*Mise en forme de la ligne*/
     border-top: 2px solid #000;
-    bottom: 10px;
+    bottom: 0px;
     width: 85%;
     padding-top: 10px;
+    z-index: 1000;
 }
 
 .affichage-liens a {

@@ -19,11 +19,17 @@
                     datasets: [{
                         label: 'Stock price',
                         data: prices,
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderColor: 'rgba(25, 120, 220, 1)',
                         fill: false
                     }]
                 }
             });
         });
     </script>
+
+<div class="affichage-liens", class="text-center">
+        <a href="{% url 'home' %}">Accueil</a>
+        <a href="{% url 'portfolio' %}">Portfolio</a>
+        <a href="{% url 'search_company' %}">Retour</a>
+    </div>
 {% endblock %}

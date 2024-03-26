@@ -19,7 +19,6 @@ import yfinance as yf
 from django.shortcuts import get_list_or_404
 import json
 import pandas as pd
-import pandas_datareader as data
 import requests
 
 
