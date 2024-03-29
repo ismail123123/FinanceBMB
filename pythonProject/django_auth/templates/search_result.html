@@ -6,28 +6,48 @@
     <canvas id="chart"></canvas>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var historyData = {{ history.to_json|safe }};
-            var dates = Object.keys(historyData['Close']);
-            var prices = Object.values(historyData['Close']);
+    document.addEventListener("DOMContentLoaded", function() {
+        var historyData = {{ history.to_json|safe }};
+        var datesBrutes = Object.keys(historyData['Close']);
 
-            var ctx = document.getElementById('chart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [{
-                        label: 'Stock price',
-                        data: prices,
-                        borderColor: 'rgba(25, 120, 220, 1)',
-                        fill: false
-                    }]
-                }
-            });
+
+        // Méthode pour convertir les timestamp dans le format JJ/MM/YYYY
+        function formatDate(timestampStr) {
+            // Convertir la date en nombre puis la stocker
+            var timestamp = parseInt(timestampStr);
+            var date = new Date(timestamp);
+
+            // Formater les dates, le "0" sert lorsqu'on a par exemple janvier = 01 et non = null1
+            var jour = ("0" + date.getDate()).slice(-2);
+            var mois = ("0" + (date.getMonth() + 1)).slice(-2);
+            var annee = date.getFullYear();
+
+            return jour + '/' + mois + '/' + annee;
+        }
+
+
+        var dates = datesBrutes.map(function(rawDate) {
+            return formatDate(rawDate);
         });
-    </script>
 
-<div class="affichage-liens", class="text-center">
+        var prices = Object.values(historyData['Close']);
+        var ctx = document.getElementById('chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates, // Utilise les dates formatées ici
+                datasets: [{
+                    label: 'Stock price',
+                    data: prices,
+                    borderColor: 'rgba(25, 120, 220, 1)',
+                    fill: false
+                }]
+            }
+        });
+    });
+</script>
+
+    <div class="affichage-liens" , class="text-center">
         <a href="{% url 'home' %}">Accueil</a>
         <a href="{% url 'portfolio' %}">Portfolio</a>
         <a href="{% url 'search_company' %}">Retour</a>
