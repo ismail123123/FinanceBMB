@@ -96,10 +96,24 @@ def search_company(request):
             company = Ticker(company_name)
             history = company.history(period='1y')
 
+            df = yf.download(company_name, start='2020-11-01')
+            df['EMA12'] = df.Close.ewm(span=12).mean()
+            df['EMA26'] = df.Close.ewm(span=26).mean()
+            df['MACD'] = df.EMA12 - df.EMA26
+            df['signal'] = df.MACD.ewm(span=9).mean()
+            macd_data = []
+            for index, row in df.iterrows():
+                macd_data.append({
+                    'Date': index.strftime('%Y-%m-%d'),
+                    'MACD': row['MACD'],
+                    'signal': row['signal']
+                })
+
             context = {
                 'company': company,
+                'history': history,
+                'macd_data': macd_data,
 
-                'history': history
             }
         return render(request, 'search_result.html', context)
     else:

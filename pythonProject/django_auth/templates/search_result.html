@@ -1,55 +1,104 @@
 {% extends 'base.html' %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% block content %}
-    <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
-    <p>Price: ${{ company.history.Close|last }}</p>
-    <canvas id="chart"></canvas>
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var historyData = {{ history.to_json|safe }};
-        var datesBrutes = Object.keys(historyData['Close']);
-
-
-        // Méthode pour convertir les timestamp dans le format JJ/MM/YYYY
-        function formatDate(timestampStr) {
-            // Convertir la date en nombre puis la stocker
-            var timestamp = parseInt(timestampStr);
-            var date = new Date(timestamp);
-
-            // Formater les dates, le "0" sert lorsqu'on a par exemple janvier = 01 et non = null1
-            var jour = ("0" + date.getDate()).slice(-2);
-            var mois = ("0" + (date.getMonth() + 1)).slice(-2);
-            var annee = date.getFullYear();
-
-            return jour + '/' + mois + '/' + annee;
-        }
-
-
-        var dates = datesBrutes.map(function(rawDate) {
-            return formatDate(rawDate);
-        });
-
-        var prices = Object.values(historyData['Close']);
-        var ctx = document.getElementById('chart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates, // Utilise les dates formatées ici
-                datasets: [{
-                    label: 'Stock price',
-                    data: prices,
-                    borderColor: 'rgba(25, 120, 220, 1)',
-                    fill: false
-                }]
-            }
-        });
-    });
-</script>
-
-    <div class="affichage-liens" , class="text-center">
-        <a href="{% url 'home' %}">Accueil</a>
-        <a href="{% url 'portfolio' %}">Portfolio</a>
-        <a href="{% url 'search_company' %}">Retour</a>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Price: ${{ company.history.Close|last }}</p>
+                    <canvas id="price-chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>MACD and Signal</h2>
+                </div>
+                <div class="card-body">
+                    <canvas id="macd-signal-chart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+<div class="affichage-liens text-center">
+    <a href="{% url 'home' %}" class="btn btn-primary">Accueil</a>
+    <a href="{% url 'portfolio' %}" class="btn btn-primary">Portfolio</a>
+    <a href="{% url 'search_company' %}" class="btn btn-primary">Retour</a>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var historyData = {{ history.to_json|safe }};
+    var datesBrutes = Object.keys(historyData['Close']);
+
+    // Méthode pour convertir les timestamp dans le format JJ/MM/YYYY
+    function formatDate(timestampStr) {
+        var timestamp = parseInt(timestampStr);
+        var date = new Date(timestamp);
+        var jour = ("0" + date.getDate()).slice(-2);
+        var mois = ("0" + (date.getMonth() + 1)).slice(-2);
+        var annee = date.getFullYear();
+        return jour + '/' + mois + '/' + annee;
+    }
+
+    var dates = datesBrutes.map(function(rawDate) {
+        return formatDate(rawDate);
+    });
+
+    var prices = Object.values(historyData['Close']);
+    var ctxPrice = document.getElementById('price-chart').getContext('2d');
+    var priceChart = new Chart(ctxPrice, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Stock price',
+                data: prices,
+                borderColor: 'rgba(25, 120, 220, 1)',
+                fill: false,
+
+            }]
+        }
+    });
+
+    // Ajouter le MACD et le signal au graphique
+    var macdData = {{ macd_data|safe }};
+    var macdValues = macdData.map(function(data) {
+        return data.MACD;
+    });
+
+    var signalValues = macdData.map(function(data) {
+        return data.signal;
+    });
+
+    var ctxMacdSignal = document.getElementById('macd-signal-chart').getContext('2d');
+    var macdSignalChart = new Chart(ctxMacdSignal, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'MACD',
+                data: macdValues,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                fill: false,
+                pointRadius: 0,
+                pointHoverRadius: 0
+            }, {
+                label: 'Signal',
+                data: signalValues,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false,
+                pointRadius: 0, //
+                pointHoverRadius: 0 //
+            }]
+        }
+    });
+});
+</script>
 {% endblock %}
