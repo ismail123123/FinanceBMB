@@ -152,8 +152,8 @@
         var product_adjustment_{{ forloop.counter }} = (value_{{ forloop.counter }} * shares_{{ forloop.counter }}).toFixed(2);
         document.getElementById("product_adjustment_{{ forloop.counter }}").textContent = product_adjustment_{{ forloop.counter }};
 
-        var rendement_{{ forloop.counter }} = ((value_{{ forloop.counter }}/ current_price_{{ forloop.counter }}) * 100).toFixed(2);
-        document.getElementById("rendement_{{ forloop.counter }}").textContent = rendement_{{ forloop.counter }};
+       var rendement_{{ forloop.counter }} = (((current_price_{{ forloop.counter }} - value_{{ forloop.counter }}) / value_{{ forloop.counter }}) * 100).toFixed(2);
+    document.getElementById("rendement_{{ forloop.counter }}").textContent = rendement_{{ forloop.counter }};
     {% endfor %}
 </script>
 <!-- Affiche les liens en bas de la page -->
