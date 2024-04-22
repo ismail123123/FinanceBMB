@@ -19,6 +19,8 @@ import yfinance as yf
 from django.shortcuts import get_list_or_404
 import json
 import pandas as pd
+import pandas_datareader as pdr
+import numpy as np
 import requests
 
 
@@ -90,18 +92,24 @@ def search_company(request):
     if request.method == 'POST':
         form = CompanySearchForm(request.POST)
         if form.is_valid():
-            data = []
             company_name = form.cleaned_data['company_name']
-
             company = Ticker(company_name)
             history = company.history(period='1y')
 
-            df = yf.download(company_name, start='2020-11-01')
+            df = yf.download(company_name, start='2019-11-01')
             df['EMA12'] = df.Close.ewm(span=12).mean()
             df['EMA26'] = df.Close.ewm(span=26).mean()
             df['MACD'] = df.EMA12 - df.EMA26
             df['signal'] = df.MACD.ewm(span=9).mean()
+
             macd_data = []
+            Buy, Sell = [], []
+            for i in range(2, len(df)):
+                if df.MACD.iloc[i] > df.signal.iloc[i] and df.MACD.iloc[i - 1] < df.signal.iloc[i - 1]:
+                    Buy.append(i)
+                elif df.MACD.iloc[i] < df.signal.iloc[i] and df.MACD.iloc[i - 1] > df.signal.iloc[i - 1]:
+                    Sell.append(i)
+
             for index, row in df.iterrows():
                 macd_data.append({
                     'Date': index.strftime('%Y-%m-%d'),
@@ -109,15 +117,28 @@ def search_company(request):
                     'signal': row['signal']
                 })
 
+            info = pd.DataFrame(pdr.get_data_yahoo(company)['Close'])
+            info['returns'] = np.log(info["Close"]).diff()
+            ma =50  # Example moving average value, you may adjust it accordingly
+            info['ma'] = info['Close'].rolling(ma).mean()
+            info['ratio'] = info['Close'] / info['ma']
+
+            percentiles = [5, 10, 50, 90, 95]
+            p = np.percentile(info['ratio'].dropna(), percentiles)
+
             context = {
                 'company': company,
                 'history': history,
                 'macd_data': macd_data,
-
+                'Buy': Buy,
+                'Sell': Sell,
+                'info': info['ratio'],
+                'percentile': p
             }
-        return render(request, 'search_result.html', context)
+            return render(request, 'search_result.html', context)
     else:
-
         form = CompanySearchForm()
         company = "Company not found"
-    return render(request, 'search_company.html', {'company': company, 'form': form})
+        return render(request, 'search_company.html', {'company': company, 'form': form})
+
+

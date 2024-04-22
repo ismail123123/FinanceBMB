@@ -9,7 +9,7 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text">Price: ${{ company.history.Close|last }}</p>
-                    <canvas id="price-chart"></canvas>
+                    <div id="price-chart"></div> <!-- Changed from canvas to div -->
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
                     <h2>MACD and Signal</h2>
                 </div>
                 <div class="card-body">
-                    <canvas id="macd-signal-chart"></canvas>
+                    <div id="macd-signal-chart"></div> <!-- Changed from canvas to div -->
                 </div>
             </div>
         </div>
@@ -31,6 +31,9 @@
     <a href="{% url 'portfolio' %}">Portfolio</a>
     <a href="{% url 'search_company' %}">Retour</a>
 </div>
+
+<!-- Include Plotly.js library -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -52,20 +55,16 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     var prices = Object.values(historyData['Close']);
-    var ctxPrice = document.getElementById('price-chart').getContext('2d');
-    var priceChart = new Chart(ctxPrice, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'Stock price',
-                data: prices,
-                borderColor: 'rgba(25, 120, 220, 1)',
-                fill: false,
 
-            }]
-        }
-    });
+    // Plotly chart for stock price
+    Plotly.newPlot('price-chart', [{
+        x: dates,
+        y: prices,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Stock price',
+        line: {color: 'rgba(25, 120, 220, 1)'}
+    }]);
 
     // Ajouter le MACD et le signal au graphique
     var macdData = {{ macd_data|safe }};
@@ -77,28 +76,56 @@ document.addEventListener("DOMContentLoaded", function() {
         return data.signal;
     });
 
-    var ctxMacdSignal = document.getElementById('macd-signal-chart').getContext('2d');
-    var macdSignalChart = new Chart(ctxMacdSignal, {
-        type: 'line',
-        data: {
-            labels: dates,
-            datasets: [{
-                label: 'MACD',
-                data: macdValues,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                fill: false,
-                pointRadius: 0,
-                pointHoverRadius: 0
-            }, {
-                label: 'Signal',
-                data: signalValues,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: false,
-                pointRadius: 0, //jjj
-                pointHoverRadius: 0 //
-            }]
+    // Plotly chart for MACD and Signal
+    var buySignals = {{ Buy|safe }};
+    var sellSignals = {{ Sell|safe }};
+
+    Plotly.newPlot('macd-signal-chart', [{
+        x: dates,
+        y: macdValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'MACD',
+        line: {color: 'rgba(255, 99, 132, 1)'}
+    }, {
+        x: dates,
+        y: signalValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Signal',
+        line: {color: 'rgba(75, 192, 192, 1)'}
+    }, {
+        x: buySignals.map(function(index) { return dates[index]; }),
+        y: buySignals.map(function(index) { return macdValues[index]; }),
+        mode: 'markers',
+        type: 'triangle',
+        name: 'Buy',
+        marker: {
+            color: 'green',
+            size: 10
         }
-    });
+    }, {
+        x: sellSignals.map(function(index) { return dates[index]; }),
+        y: sellSignals.map(function(index) { return macdValues[index]; }),
+        mode: 'markers',
+        type: 'triangle',
+        name: 'Sell',
+        marker: {
+            color: 'red',
+            size: 10
+        }
+    }]);
+
+    var inforatio = {{ info|safe }};
+    var percentiles = {{ percentile|safe }};
+    Plotly.newPlot('meanreverse', [{
+        x: dates,
+        y: inforatio,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'MACD',
+        line: {color: 'rgba(255, 99, 132, 1)'}
+    }]);
 });
 </script>
 {% endblock %}
