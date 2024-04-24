@@ -2,169 +2,256 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        <div class="row mt-5 justify-content-center">
-            <div class="col-md-6">
-                <canvas id="barChart" width="400" height="250"></canvas>
-            </div>
-            <div class="col-md-6">
-                <canvas id="doughnutChart" width="400" height="250"></canvas>
+        <!-- Données de la compagnie -->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Bienvenue sur votre portefeuille, {{ user.username }}!</h2>
+                    <hr>
+                    <!-- Formulaire pour ajouter un actif -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Ajouter un actif</h5>
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                {{ form }}
+                                <button class="btn btn-success mt-2" type="submit">Ajouter</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <script>
-            var ctx1 = document.getElementById('barChart').getContext('2d');
-            var barChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
-                    datasets: [{
-                        label: '# of Products',
-                        data: [{% for portfolio in portfolios %} {{ portfolio.value }}, {% endfor %}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)',
-                            'rgba(240, 120, 50, 0.8)',
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(240, 120, 50, 1)',
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
 
-            var ctx2 = document.getElementById('doughnutChart').getContext('2d');
-            var doughnutChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: [{% for portfolio in portfolios %}  '{{ portfolio.company_name }}',  {% endfor %}],
-                    datasets: [{
-                        label: '# of Products',
-                        data: [{% for portfolio in portfolios %} {{ portfolio.shares }}, {% endfor %}],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                            'rgba(255, 159, 64, 0.8)',
-                            'rgba(240, 120, 50, 0.8)',
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(240, 120, 50, 1)',
-                        ],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        </script>
-
-        <div class="row mt-5 justify-content-center">
-            <div class="col-md-4 mt-2">
-                <h4 class="text-center">Bienvenue sur votre portflio</h4>
-                <hr>
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    {{ form }}
-                    <input class="btn btn-success mt-2" type="submit" value="Ajouter un actif">
-                </form>
+        <!-- Graphiques -->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Répartition de la valeur du portefeuille</h5>
+                            <div id="pieChart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Rendement de chaque compagnie</h5>
+                            <div id="barChart"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4 mt-2">
-                <h4 class="text-center">Vos données</h4>
-                <hr>
-      <table class="table">
-    <thead>
-        <tr>
-            <th>Nom de la compagnie</th>
-            <th>Prix de l'action</th>
-            <th>Nombre de parts</th>
-            <th>Prix total actuel</th>
-            <th>Coût d'ajustement</th>
-            <th>Rendement</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for portfolio in portfolios %}
-        <tr>
-            <td>{{ portfolio.company_name }}</td>
-            <td>{{ portfolio.current_price|floatformat:2 }}</td>
-            <td>{{ portfolio.shares }}</td>
-
-           <!-- Nouvelle colonne pour le nombre de parts -->
-            <td><span id="product_current_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le prix total actuel -->
-            <td><span id="product_adjustment_{{ forloop.counter }}"></span></td> <!-- Nouvelle colonne pour le coût d'ajustement -->
-            <td><span id="rendement_{{ forloop.counter }}"></span>%</td>
-            <td>
-                <form action="{% url 'delete_data' %}" method="POST" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
-                    <input type="hidden" name="value" value="{{ portfolio.value }}">
-                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s;">
-                        Supprimer
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<script>
-    {% for portfolio in portfolios %}
-        var current_price_{{ forloop.counter }} = {{ portfolio.current_price }};
-        var value_{{ forloop.counter }} = {{ portfolio.value }};
-        var shares_{{ forloop.counter }} = {{ portfolio.shares }};
-
-        // Calcul du prix total actuel
-        var product_current_{{ forloop.counter }} = (current_price_{{ forloop.counter }} * shares_{{ forloop.counter }}).toFixed(2);
-        document.getElementById("product_current_{{ forloop.counter }}").textContent = product_current_{{ forloop.counter }};
-
-        // Calcul du coût d'ajustement
-        var product_adjustment_{{ forloop.counter }} = (value_{{ forloop.counter }} * shares_{{ forloop.counter }}).toFixed(2);
-        document.getElementById("product_adjustment_{{ forloop.counter }}").textContent = product_adjustment_{{ forloop.counter }};
-
-       var rendement_{{ forloop.counter }} = (((current_price_{{ forloop.counter }} - value_{{ forloop.counter }}) / value_{{ forloop.counter }}) * 100).toFixed(2);
-    document.getElementById("rendement_{{ forloop.counter }}").textContent = rendement_{{ forloop.counter }};
-    {% endfor %}
-</script>
-<!-- Affiche les liens en bas de la page -->
-    <div class="affichage-liens">
-        <a href="{% url 'home' %}">Accueil</a>
-        <a href="{% url 'search_company' %}">Chercher une compagnie</a>
+        </div>
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Nombre de parts de chaque compagnie</h5>
+            <div id="barChartShares"></div>
+        </div>
     </div>
+</div>
+
+        <!-- Données du portefeuille -->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Vos données</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom de la compagnie</th>
+                                            <th>Prix de l'action</th>
+                                            <th>Nombre de parts</th>
+                                            <th>Prix total actuel</th>
+                                            <th>Coût d'ajustement</th>
+                                            <th>Rendement</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for portfolio in portfolios %}
+                                        <tr>
+                                            <td>{{ portfolio.company_name }}</td>
+                                            <td>{{ portfolio.current_price|floatformat:2 }}</td>
+                                            <td>{{ portfolio.shares }}</td>
+                                            <td><span id="product_current_{{ forloop.counter }}"></span></td>
+                                            <td><span id="product_adjustment_{{ forloop.counter }}"></span></td>
+                                            <td><span id="rendement_{{ forloop.counter }}"></span>%</td>
+                                            <td>
+                                                <form action="{% url 'delete_data' %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="company_name" value="{{ portfolio.company_name }}">
+                                                    <input type="hidden" name="value" value="{{ portfolio.value }}">
+                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% else %}
-        <p>Vous n'êtes pas connecté</p>
-        <p><a target=_blank href="{% url 'signup' %}">Créer un compte</a></p>
-        <p><a target=_blank href="{% url 'login' %}">Se connecter</a></p>
+
+        <!-- Affiche les liens en bas de la page -->
+        <div class="affichage-liens mt-3 text-center">
+            <a href="{% url 'home' %}" class="btn btn-primary">Accueil</a>
+            <a href="{% url 'search_company' %}" class="btn btn-info">Chercher une compagnie</a>
+        </div>
+
+        <!-- Script pour les graphiques et le calcul du rendement -->
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script>
+            var company_names = [];
+            var current_prices = [];
+            var shares = [];
+            var values = [];
+
+            {% for portfolio in portfolios %}
+                company_names.push('{{ portfolio.company_name }}');
+                current_prices.push({{ portfolio.current_price }});
+                shares.push({{ portfolio.shares }});
+                values.push({{ portfolio.value }});
+            {% endfor %}
+
+            // Calcul du prix total actuel
+            var product_current = [];
+            for (var i = 0; i < company_names.length; i++) {
+                product_current.push((current_prices[i] * shares[i]).toFixed(2));
+                document.getElementById("product_current_" + (i+1)).textContent = product_current[i];
+            }
+
+            // Calcul du coût d'ajustement
+            var product_adjustment = [];
+            for (var i = 0; i < company_names.length; i++) {
+                product_adjustment.push((values[i] * shares[i]).toFixed(2));
+                document.getElementById("product_adjustment_" + (i+1)).textContent = product_adjustment[i];
+            }
+
+            // Calcul du rendement
+            var rendements = [];
+            for (var i = 0; i < company_names.length; i++) {
+                rendements.push((((current_prices[i] - values[i]) / values[i]) * 100).toFixed(2));
+                document.getElementById("rendement_" + (i+1)).textContent = rendements[i] + "%";
+            }
+
+            // Création du graphique Plotly pour le rendement
+            var trace1 = {
+                x: company_names,
+                y: rendements,
+                type: 'bar',
+                marker: {
+                    color: 'rgb(158,202,225)',
+                    opacity: 0.7,
+                }
+            };
+
+            var data = [trace1];
+
+            var layout = {
+                title: 'Rendement de chaque compagnie',
+                xaxis: {
+                    title: 'Nom de la compagnie',
+                    tickangle: -45
+                },
+                yaxis: {
+                    title: 'Rendement (%)'
+                },
+                bargap: 0.05
+            };
+
+            Plotly.newPlot('barChart', data, layout);
+
+            // Création du graphique Plotly pour la répartition de la valeur du portefeuille
+            var trace2 = {
+                labels: company_names,
+                values: current_prices,
+                type: 'pie',
+                marker: {
+                    colors: ['rgb(158,202,225)', 'rgb(161,217,155)', 'rgb(184,225,134)', 'rgb(184,225,134)', 'rgb(255,223,186)', 'rgb(255,195,160)', 'rgb(255,171,144)'],
+                }
+            };
+
+            var data2 = [trace2];
+
+            var layout2 = {
+                title: 'Répartition de la valeur du portefeuille',
+                showlegend: true
+            };
+
+            Plotly.newPlot('pieChart', data2, layout2);
+
+       var trace3 = {
+        x: shares,
+        y: company_names,
+        type: 'bar',
+        orientation: 'h',
+        marker: {
+            color: 'rgb(158,202,225)',
+            opacity: 0.7,
+        }
+    };
+
+    var data3 = [trace3];
+
+    var layout3 = {
+        title: 'Nombre de parts de chaque compagnie',
+        yaxis: {
+            title: 'Nom de la compagnie'
+        },
+        xaxis: {
+            title: 'Nombre de parts'
+        }
+    };
+
+    Plotly.newPlot('barChartShares', data3, layout3);
+
+</script> {% else %}
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="alert alert-warning" role="alert">
+                        Vous n'êtes pas connecté.
+                    </div>
+                    <p><a href="{% url 'signup' %}" class="btn btn-primary">Créer un compte</a></p>
+                    <p><a href="{% url 'login' %}" class="btn btn-success">Se connecter</a></p>
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

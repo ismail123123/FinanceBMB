@@ -17,9 +17,7 @@ from .models import Portfolio
 from .models import Compagny
 import yfinance as yf
 from django.shortcuts import get_list_or_404
-import json
-import pandas as pd
-import pandas_datareader as pdr
+
 import numpy as np
 import requests
 
@@ -117,23 +115,27 @@ def search_company(request):
                     'signal': row['signal']
                 })
 
-            info = pd.DataFrame(pdr.get_data_yahoo(company)['Close'])
-            info['returns'] = np.log(info["Close"]).diff()
-            ma =50  # Example moving average value, you may adjust it accordingly
-            info['ma'] = info['Close'].rolling(ma).mean()
-            info['ratio'] = info['Close'] / info['ma']
+            # algorithme 2
 
-            percentiles = [5, 10, 50, 90, 95]
-            p = np.percentile(info['ratio'].dropna(), percentiles)
+            ma = 14
+            comp_close = history['Close']
+            history['returns'] = np.log(comp_close).diff()
+            history['ma'] = comp_close.rolling(ma).mean()
+            history['ratio'] = comp_close / history['ma']
+            percentiles = [5, 95]
+            ratio=history['ratio']
+            p = np.percentile(ratio.dropna(), percentiles)
+
 
             context = {
                 'company': company,
                 'history': history,
                 'macd_data': macd_data,
+                'p': p[0],
+                'p1':p[1],
                 'Buy': Buy,
                 'Sell': Sell,
-                'info': info['ratio'],
-                'percentile': p
+
             }
             return render(request, 'search_result.html', context)
     else:

@@ -23,6 +23,16 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6"> <!-- Moved this div inside the row -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Ratio</h2>
+                </div>
+                <div class="card-body">
+                    <div id="ratio-chart"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -116,16 +126,41 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }]);
 
-    var inforatio = {{ info|safe }};
-    var percentiles = {{ percentile|safe }};
-    Plotly.newPlot('meanreverse', [{
+    var ratioData = {{ history.ratio.to_json|safe }};
+    var ratioValues = Object.values(ratioData);
+
+    // Plotly chart for Ratio
+    var ratioChart = [{
         x: dates,
-        y: inforatio,
+        y: ratioValues,
         type: 'scatter',
         mode: 'lines',
-        name: 'MACD',
-        line: {color: 'rgba(255, 99, 132, 1)'}
-    }]);
+        name: 'Ratio',
+        line: {color: 'rgba(255, 0, 0, 1)'}
+    }];
+
+    // Additional graphs to be added
+    var additionalGraphData = [
+        {
+            x: dates,
+            y: Array(dates.length).fill({{p}}),
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Additional Graph 1',
+            line: {color: 'rgba(0, 255, 0, 1)'}
+        },
+        {
+            x: dates,
+            y: Array(dates.length).fill({{p1}}),
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Additional Graph 2',
+            line: {color: 'rgba(0, 0, 255, 1)'}
+        }
+    ];
+
+    Plotly.newPlot('ratio-chart', ratioChart.concat(additionalGraphData));
 });
 </script>
 {% endblock %}
+
