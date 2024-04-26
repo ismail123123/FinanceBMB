@@ -2,7 +2,9 @@
     color: blue;
     font-family: 'Georgia', serif;
     border-bottom: 2px solid #000;
+    display: inline-block;
     padding-bottom: 10px;
+    margin-left: 10px;
 }
 
 /*Mets une image en fond d'écran et centre les textes*/
@@ -29,8 +31,8 @@ body {
     border-top: 2px solid #000;
     bottom: 0px;
     width: 80%;
-    padding-top: 10px;
-    padding-bottom : 10px;
+    padding-top: 20px;
+    padding-bottom : 15px;
 }
 
 .affichage-liens a{
@@ -49,5 +51,40 @@ body {
     line-height: 1.42857143;
 }
 
+.logo-site {
+    margin-top: 20px;
+    margin-left: 20px;
+    display: inline-block;
+}
+
+.logo-accueil {
+    margin-top: 20px;
+    margin-left: 750px;
+    display: inline-block;
+}
+
+.logo {
+    width: 50px;
+    height: auto;
+}
+
+.taille-image {
+    width: 350px;
+    height: auto;
+}
+
+.bouton-deco {
+    background-color: #007bff;
+    color: white;
+    border-radius: 10px;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.bouton-deco:hover {
+    background-color: #0056b3;
+}
 
 

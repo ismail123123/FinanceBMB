@@ -12,9 +12,15 @@
 
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
-            <button type="submit">Déconnexion</button>
+            <button type="submit" class="bouton-deco" >Déconnexion</button>
         </form>
     </div>
+
+
+<div class="logo-accueil">
+    <img class="taille-image"  src='/static/logo.png' alt="Description de l'image">
+</div>
+
 <div class="affichage-liens">
     <a href="{% url 'portfolio' %}">Portfolio</a>
         <a href="{% url 'search_company' %}">Chercher une compagnie</a>
