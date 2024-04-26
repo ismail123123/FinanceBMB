@@ -9,27 +9,13 @@
                 </div>
                 <div class="card-body">
                     <p class="card-text">Price: ${{ company.history.Close|last }}</p>
-                    <div id="price-chart"></div> <!-- Changed from canvas to div -->
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2>MACD and Signal</h2>
-                </div>
-                <div class="card-body">
-                    <div id="macd-signal-chart"></div> <!-- Changed from canvas to div -->
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6"> <!-- Moved this div inside the row -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Ratio</h2>
-                </div>
-                <div class="card-body">
-                    <div id="ratio-chart"></div>
+                    {% if chart_type == 'price' %}
+                        <div id="price-chart"></div>
+                    {% elif chart_type == 'macd' %}
+                        <div id="macd-signal-chart"></div>
+                    {% elif chart_type == 'ratio' %}
+                        <div id="ratio-chart"></div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -47,36 +33,36 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    var historyData = {{ history.to_json|safe }};
-    var datesBrutes = Object.keys(historyData['Close']);
 
-    // Méthode pour convertir les timestamp dans le format JJ/MM/YYYY
-    function formatDate(timestampStr) {
-        var timestamp = parseInt(timestampStr);
-        var date = new Date(timestamp);
-        var jour = ("0" + date.getDate()).slice(-2);
-        var mois = ("0" + (date.getMonth() + 1)).slice(-2);
-        var annee = date.getFullYear();
-        return jour + '/' + mois + '/' + annee;
-    }
+        var historyData = {{ history.to_json|safe }};
+        var datesBrutes = Object.keys(historyData['Close']);
 
-    var dates = datesBrutes.map(function(rawDate) {
-        return formatDate(rawDate);
-    });
+        // Méthode pour convertir les timestamp dans le format JJ/MM/YYYY
+        function formatDate(timestampStr) {
+            var timestamp = parseInt(timestampStr);
+            var date = new Date(timestamp);
+            var jour = ("0" + date.getDate()).slice(-2);
+            var mois = ("0" + (date.getMonth() + 1)).slice(-2);
+            var annee = date.getFullYear();
+            return jour + '/' + mois + '/' + annee;
+        }
 
-    var prices = Object.values(historyData['Close']);
+        var dates = datesBrutes.map(function(rawDate) {
+            return formatDate(rawDate);
+        });
+ {% if chart_type == 'price' %}
+        var prices = Object.values(historyData['Close']);
 
-    // Plotly chart for stock price
-    Plotly.newPlot('price-chart', [{
-        x: dates,
-        y: prices,
-        type: 'scatter',
-        mode: 'lines',
-        name: 'Stock price',
-        line: {color: 'rgba(25, 120, 220, 1)'}
-    }]);
-
-    // Ajouter le MACD et le signal au graphique
+        // Plotly chart for stock price
+        Plotly.newPlot('price-chart', [{
+            x: dates,
+            y: prices,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Stock price',
+            line: {color: 'rgba(25, 120, 220, 1)'}
+        }]);
+    {% elif chart_type == 'macd' %}
     var macdData = {{ macd_data|safe }};
     var macdValues = macdData.map(function(data) {
         return data.MACD;
@@ -86,10 +72,10 @@ document.addEventListener("DOMContentLoaded", function() {
         return data.signal;
     });
 
-    // Plotly chart for MACD and Signal
     var buySignals = {{ Buy|safe }};
     var sellSignals = {{ Sell|safe }};
 
+    // Plotly chart for MACD and Signal
     Plotly.newPlot('macd-signal-chart', [{
         x: dates,
         y: macdValues,
@@ -125,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function() {
             size: 10
         }
     }]);
-
+ {% elif chart_type == 'ratio' %}
     var ratioData = {{ history.ratio.to_json|safe }};
     var ratioValues = Object.values(ratioData);
 
@@ -160,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     Plotly.newPlot('ratio-chart', ratioChart.concat(additionalGraphData));
+    {% endif %}
 });
 </script>
 {% endblock %}
-

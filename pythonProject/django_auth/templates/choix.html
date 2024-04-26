@@ -1,10 +1,21 @@
-{% extends "base.html" %}
-
-<link rel="stylesheet" href="styles.css">
-{% block title %}Home{% endblock %}
-
-{% block content %}
-
-
-
-{% endblock %}
+<!-- search_type.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Search Type</title>
+</head>
+<body>
+    <h1>Choose Search Type</h1>
+    <form method="post" action="{% url 'search_company' %}">
+        {% csrf_token %}
+        <label for="search_type">Select Search Type:</label><br>
+        <select id="search_type" name="search_type">
+            <option value="trend_trading">Trend Trading</option>
+            <option value="bourse">Bourse</option>
+        </select><br><br>
+        <button type="submit">Search</button>
+    </form>
+</body>
+</html>

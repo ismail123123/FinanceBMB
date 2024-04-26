@@ -93,7 +93,7 @@ def search_company(request):
             company_name = form.cleaned_data['company_name']
             company = Ticker(company_name)
             history = company.history(period='1y')
-
+            chart_type = request.POST.get('chart-type', 'price')
             df = yf.download(company_name, start='2019-11-01')
             df['EMA12'] = df.Close.ewm(span=12).mean()
             df['EMA26'] = df.Close.ewm(span=26).mean()
@@ -135,7 +135,7 @@ def search_company(request):
                 'p1':p[1],
                 'Buy': Buy,
                 'Sell': Sell,
-
+                'chart_type' : chart_type
             }
             return render(request, 'search_result.html', context)
     else:
@@ -143,4 +143,6 @@ def search_company(request):
         company = "Company not found"
         return render(request, 'search_company.html', {'company': company, 'form': form})
 
-
+from django.shortcuts import render
+def choix(request):
+  return  render(request,'choix.html')

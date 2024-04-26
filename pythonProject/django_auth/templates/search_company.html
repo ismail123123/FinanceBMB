@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
     {% if user.is_authenticated %}
-
-
-
         <h2>Quelle compagnie cherchez-vous?</h2>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            <label for="chart-type">Choisissez le type de graphique:</label>
+            <select name="chart-type" id="chart-type">
+                <option value="price">Prix</option>
+                <option value="macd">MACD et Signal</option>
+                <option value="ratio">Ratio</option>
+            </select>
             <button type="submit">Chercher</button>
         </form>
 
-<div class="affichage-liens">
-        <a href="{% url 'home' %}">Accueil</a>
-        <a href="{% url 'portfolio' %}">Portfolio</a>
-    </div>
+        <div class="affichage-liens">
+            <a href="{% url 'home' %}">Accueil</a>
+            <a href="{% url 'portfolio' %}">Portfolio</a>
+        </div>
 
     {% else %}
         <p>Vous n'êtes pas connecté</p>

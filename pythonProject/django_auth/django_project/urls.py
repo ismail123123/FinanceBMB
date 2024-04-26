@@ -12,6 +12,7 @@ urlpatterns = [
     path("portfolio/", TemplateView.as_view(template_name="portfolio.html")),
     path("search_company/", TemplateView.as_view(template_name="search_company.html")),
 
+
 ]
 
 
