@@ -59,7 +59,6 @@ body {
 
 .logo-accueil {
     margin-top: 20px;
-    margin-left: 750px;
     display: inline-block;
 }
 
@@ -81,10 +80,42 @@ body {
     border: none;
     cursor: pointer;
     font-size: 16px;
+    width: 300px;
 }
 
 .bouton-deco:hover {
     background-color: #0056b3;
 }
 
+.content-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.section-gauche {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.section-droite {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.salutations {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.texte-salutations{
+    color: blue;
+    font-family: 'Georgia', serif;
+    font-size: 30px;
+}
