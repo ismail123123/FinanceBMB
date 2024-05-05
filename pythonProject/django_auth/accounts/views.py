@@ -63,8 +63,15 @@ def portfolio(request):
             ticker = yf.Ticker(company_name)
             current_price = ticker.history(period="1d")["Close"].iloc[-1]
             setattr(portfolio, 'current_price', current_price)
+
+            info = ticker.info
+            company_type = info.get('quoteType', 'Type inconnu')
+            setattr(portfolio, 'company_type', company_type)
+
+
         except:
             setattr(portfolio, 'current_price', "Données non disponibles")
+            setattr(portfolio, 'company_type', "Type inconnu")
     context = {
 
         "portfolios": portfolios,

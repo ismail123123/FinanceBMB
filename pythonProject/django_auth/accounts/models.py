@@ -12,6 +12,7 @@ class Portfolio(models.Model):
     shares = models.FloatField()
 
 
+
     def __str__(self):
         return f'{self.company_name} - {self.value}'
 

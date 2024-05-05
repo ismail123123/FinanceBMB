@@ -23,35 +23,48 @@
             </div>
         </div>
 
-        <!-- Graphiques -->
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Répartition de la valeur du portefeuille</h5>
-                            <div id="pieChart"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Rendement de chaque compagnie</h5>
-                            <div id="barChart"></div>
-                        </div>
-                    </div>
+      <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Répartition de la valeur du portefeuille</h5>
+                    <div id="pieChart"></div>
                 </div>
             </div>
         </div>
-<div class="col-md-6">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Nombre de parts de chaque compagnie</h5>
-            <div id="barChartShares"></div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Rendement de chaque compagnie</h5>
+                    <div id="barChart"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Nombre de parts de chaque compagnie</h5>
+                    <div id="barChartShares"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Répartition des types d'actions</h5>
+                    <div id="barChartTypes"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
         <!-- Données du portefeuille -->
         <div class="container mt-5">
@@ -70,6 +83,7 @@
                                             <th>Prix total actuel</th>
                                             <th>Coût d'ajustement</th>
                                             <th>Rendement</th>
+                                            <th>type d'action</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -82,6 +96,7 @@
                                             <td><span id="product_current_{{ forloop.counter }}"></span></td>
                                             <td><span id="product_adjustment_{{ forloop.counter }}"></span></td>
                                             <td><span id="rendement_{{ forloop.counter }}"></span>%</td>
+                                             <td>{{ portfolio.company_type}}</td>
                                             <td>
                                                 <form action="{% url 'delete_data' %}" method="POST">
                                                     {% csrf_token %}
@@ -114,12 +129,14 @@
             var current_prices = [];
             var shares = [];
             var values = [];
+            var company_type =[];
 
             {% for portfolio in portfolios %}
                 company_names.push('{{ portfolio.company_name }}');
                 current_prices.push({{ portfolio.current_price }});
                 shares.push({{ portfolio.shares }});
                 values.push({{ portfolio.value }});
+                company_type.push('{{ portfolio.company_type }}');
             {% endfor %}
 
             // Calcul du prix total actuel
@@ -189,32 +206,73 @@
 
             Plotly.newPlot('pieChart', data2, layout2);
 
-       var trace3 = {
-        x: shares,
-        y: company_names,
-        type: 'bar',
-        orientation: 'h',
-        marker: {
-            color: 'rgb(158,202,225)',
-            opacity: 0.7,
-        }
-    };
+            var trace3 = {
+                x: shares,
+                y: company_names,
+                type: 'bar',
+                orientation: 'h',
+                marker: {
+                    color: 'rgb(158,202,225)',
+                    opacity: 0.7,
+                }
+            };
 
-    var data3 = [trace3];
+            var data3 = [trace3];
 
-    var layout3 = {
-        title: 'Nombre de parts de chaque compagnie',
-        yaxis: {
-            title: 'Nom de la compagnie'
-        },
-        xaxis: {
-            title: 'Nombre de parts'
-        }
-    };
+            var layout3 = {
+                title: 'Nombre de parts de chaque compagnie',
+                yaxis: {
+                    title: 'Nom de la compagnie'
+                },
+                xaxis: {
+                    title: 'Nombre de parts'
+                }
+            };
 
-    Plotly.newPlot('barChartShares', data3, layout3);
+            Plotly.newPlot('barChartShares', data3, layout3);
 
-</script> {% else %}
+       var companyTypeCounts = {};
+for (var i = 0; i < company_type.length; i++) {
+    var type = company_type[i];
+    if (!(type in companyTypeCounts)) {
+        companyTypeCounts[type] = 0;
+    }
+    companyTypeCounts[type]++;
+}
+
+// Création des données pour le graphique Plotly
+var typeLabels = Object.keys(companyTypeCounts);
+var typeCounts = Object.values(companyTypeCounts);
+
+// Création du graphique Plotly pour la répartition des types d'actions
+var trace4 = {
+    x: typeCounts,
+    y: typeLabels,
+    type: 'bar',
+    orientation: 'h',
+    marker: {
+        color: 'rgb(158,202,225)',
+        opacity: 0.7,
+    }
+};
+
+var data4 = [trace4];
+
+var layout4 = {
+    title: 'Répartition des types d\'actions',
+    yaxis: {
+        title: 'Type d\'action'
+    },
+    xaxis: {
+        title: 'Nombre d\'actions'
+    }
+};
+
+Plotly.newPlot('barChartTypes', data4, layout4);
+
+
+        </script>
+    {% else %}
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6">
@@ -228,6 +286,7 @@
         </div>
     {% endif %}
 {% endblock %}
+
 
 
 
