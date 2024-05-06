@@ -35,6 +35,32 @@ class UserCreationFormWithEmail(UserCreationForm):
         return user
 
 
+def send_password_reset_email(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+
+            error_message = "Cette adresse e-mail n'est pas enregistrée dans notre système."
+            return render(request, 'password_reset_form.html', {'error_message': error_message})
+
+
+        token = get_random_string(length=32)
+
+
+        user.profile.reset_password_token = token
+        user.profile.save()
+        subject = 'Réinitialisation de mot de passe'
+        html_message = render_to_string('motdepasse_reinitialisé_message.html', {'context': 'values'})
+        plain_message = strip_tags(html_message)
+        from_email = 'votre@email.com'
+        to_email = 'destinataire@email.com'
+
+        send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+
+
+        return render(request, 'password_reset_done.html')
 class SignUpView(generic.CreateView):
     form_class = UserCreationFormWithEmail
     success_url = reverse_lazy("login")
