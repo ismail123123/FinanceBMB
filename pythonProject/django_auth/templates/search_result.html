@@ -28,7 +28,7 @@
     <a href="{% url 'search_company' %}">Retour</a>
 </div>
 
-<!-- Include Plotly.js library -->
+
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
  {% if chart_type == 'price' %}
         var prices = Object.values(historyData['Close']);
 
-        // Plotly chart for stock price
+
         Plotly.newPlot('price-chart', [{
             x: dates,
             y: prices,
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var buySignals = {{ Buy|safe }};
     var sellSignals = {{ Sell|safe }};
 
-    // Plotly chart for MACD and Signal
+
     Plotly.newPlot('macd-signal-chart', [{
         x: dates,
         y: macdValues,
@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var ratioData = {{ history.ratio.to_json|safe }};
     var ratioValues = Object.values(ratioData);
 
-    // Plotly chart for Ratio
+
     var ratioChart = [{
         x: dates,
         y: ratioValues,
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
         line: {color: 'rgba(255, 0, 0, 1)'}
     }];
 
-    // Additional graphs to be added
+
     var additionalGraphData = [
         {
             x: dates,

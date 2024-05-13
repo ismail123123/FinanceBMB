@@ -1,4 +1,8 @@
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 from django.views import generic
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
@@ -6,6 +10,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, HttpResponseRedirect
 from django import forms
 from django.shortcuts import render, HttpResponseRedirect
+
 from yfinance import Ticker
 
 from .models import Portfolio
@@ -20,7 +25,73 @@ from django.shortcuts import get_list_or_404
 
 import numpy as np
 import requests
+"""
+At the command line, only need to run once to install the package via pip:
 
+$ pip install google-generativeai
+"""
+
+
+import google.generativeai as genai
+
+genai.configure(api_key="AIzaSyALuYNv8j0QYmAvYRHKv8abjSoZbXq-2_8")
+
+generation_config = {
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 0,
+    "max_output_tokens": 20000,
+}
+safety_settings = [
+    {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+]
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-pro-latest",
+    generation_config=generation_config,
+    safety_settings=safety_settings
+)
+
+# Démarrage de la conversation - vous pouvez initialiser avec un message différent
+convo = model.start_chat(history=[
+    {
+        "role": "user",
+        "parts": ["Bonjour!"]
+    },
+    {
+        "role": "model",
+        "parts": ["Salut! Comment puis-je vous aider aujourd'hui ?"]
+    }
+])
+
+
+def chatbot(request):
+    global bot_responses  # Accéder à la variable globale
+    bot_responses = []
+    if request.method == 'POST':
+        user_input = request.POST.get('user_input')
+        convo.send_message(user_input)
+
+        bot_response = convo.last.text
+        bot_responses.append(bot_response)
+
+        return render(request, 'chatbot.html', {'bot_response': bot_response, 'bot_responses': bot_responses})
+    else:
+        return render(request, 'chatbot.html')
 
 class UserCreationFormWithEmail(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -34,33 +105,6 @@ class UserCreationFormWithEmail(UserCreationForm):
 
         return user
 
-
-def send_password_reset_email(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-
-            error_message = "Cette adresse e-mail n'est pas enregistrée dans notre système."
-            return render(request, 'password_reset_form.html', {'error_message': error_message})
-
-
-        token = get_random_string(length=32)
-
-
-        user.profile.reset_password_token = token
-        user.profile.save()
-        subject = 'Réinitialisation de mot de passe'
-        html_message = render_to_string('motdepasse_reinitialisé_message.html', {'context': 'values'})
-        plain_message = strip_tags(html_message)
-        from_email = 'votre@email.com'
-        to_email = 'destinataire@email.com'
-
-        send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
-
-
-        return render(request, 'password_reset_done.html')
 class SignUpView(generic.CreateView):
     form_class = UserCreationFormWithEmail
     success_url = reverse_lazy("login")
