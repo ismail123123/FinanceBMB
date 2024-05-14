@@ -34,7 +34,7 @@ $ pip install google-generativeai
 
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyALuYNv8j0QYmAvYRHKv8abjSoZbXq-2_8")
+genai.configure(api_key="AIzaSyA8anLet7yihU2HHOxpp8KP0T2WliU7l_Y")
 
 generation_config = {
     "temperature": 1,

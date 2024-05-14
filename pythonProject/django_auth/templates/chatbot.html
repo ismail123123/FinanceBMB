@@ -1,1 +1,23 @@
-c
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatbot</title>
+</head>
+<body>
+  <h1>Chatbot Gemini Pro</h1>
+
+  <div id="chat-history">
+    {% for response in bot_responses %}
+      <p><strong>Bot:</strong> {{ response }}</p>
+    {% endfor %}
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <label for="user-input">Your message:</label><br>
+    <input type="text" id="user-input" name="user_input"><br>
+    <input type="submit" value="Send">
+  </form>
+
+</body>
+</html>
