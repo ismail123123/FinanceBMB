@@ -16,7 +16,7 @@ Installation et configuration :
 Installer Python 3.12
 Installer Django : pip install django
 Installer NumPy : pip install numpy
-Installer Crispy Forms
+Installer Crispy Forms:pip install crispy-form
 Installer Yahoo Finance : pip install yfinance
 Installer MySQL Client : pip install mysqlclient
 Pour exécuter le serveur : exécuter manage.py runserver après avoir navigué vers le répertoire django_auth et PythonProject.
