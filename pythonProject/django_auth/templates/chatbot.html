@@ -104,6 +104,7 @@
 
 {% block content %}
 <div class="container">
+
     <h1>Chatbot FinanceBMB</h1>
 
     {% if user.is_authenticated %}
@@ -137,10 +138,13 @@
                 <input type="submit" value="Envoyer">
             </form>
         </div>
+
     {%else %}
         <p>Vous n'êtes pas connecté</p>
         <p><a class="btn btn-primary" href="{% url 'signup' %}">Créer un compte</a></p>
         <p><a class="btn btn-secondary" href="{% url 'login' %}">Se connecter</a></p>
     {% endif %}
+    <h1>Attention, attendez un certain délai de 5 secondes avant d'envoyer votre message</h1>
 </div>
+
 {% endblock %}

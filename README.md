@@ -22,6 +22,6 @@ Installer MySQL Client : pip install mysqlclient
 Pour exécuter le serveur : exécuter manage.py runserver après avoir navigué vers le répertoire django_auth et PythonProject.
 Auteurs :
 
-Ismael Bissoular
+Ismail Bissoular
 Abdelkader Boudjema
 Ishak Moali

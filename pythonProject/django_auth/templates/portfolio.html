@@ -154,7 +154,7 @@
     var rendements = [];
     for (var i = 0; i < company_names.length; i++) {
         rendements.push((((current_prices[i] - values[i]) / values[i]) * 100).toFixed(2));
-        document.getElementById("rendement_" + (i+1)).textContent = rendements[i] + "%";
+            document.getElementById("rendement_" + (i+1)).textContent = rendements[i] ;
     }
 
     // Création du graphique Plotly pour le rendement
