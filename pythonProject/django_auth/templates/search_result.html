@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
+<!-- Conteneur principal -->
 <div class="container">
     <div class="row">
         <div class="col-md-20">
+            <!-- Carte affichant les informations de l'entreprise -->
             <div class="card">
                 <div class="card-header">
                     <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
                 </div>
                 <div class="card-body">
                     <p class="card-text">Price: ${{ company.history.Close|last }}</p>
+                    <!-- Affichage du graphique en fonction du type de graphique sélectionné -->
                     {% if chart_type == 'price' %}
                         <div id="price-chart"></div>
                     {% elif chart_type == 'macd' %}
@@ -22,55 +25,59 @@
     </div>
 </div>
 
-
-
+<!-- Script pour inclure Plotly -->
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    // Conversion des données historiques en format JSON
+    var historyData = {{ history.to_json|safe }};
+    var datesBrutes = Object.keys(historyData['Close']);
 
-        var historyData = {{ history.to_json|safe }};
-        var datesBrutes = Object.keys(historyData['Close']);
+    // Méthode pour convertir les timestamps dans le format JJ/MM/YYYY
+    function formatDate(timestampStr) {
+        var timestamp = parseInt(timestampStr);
+        var date = new Date(timestamp);
+        var jour = ("0" + date.getDate()).slice(-2);
+        var mois = ("0" + (date.getMonth() + 1)).slice(-2);
+        var annee = date.getFullYear();
+        return jour + '/' + mois + '/' + annee;
+    }
 
-        // Méthode pour convertir les timestamp dans le format JJ/MM/YYYY
-        function formatDate(timestampStr) {
-            var timestamp = parseInt(timestampStr);
-            var date = new Date(timestamp);
-            var jour = ("0" + date.getDate()).slice(-2);
-            var mois = ("0" + (date.getMonth() + 1)).slice(-2);
-            var annee = date.getFullYear();
-            return jour + '/' + mois + '/' + annee;
-        }
+    // Conversion des dates brutes en dates formatées
+    var dates = datesBrutes.map(function(rawDate) {
+        return formatDate(rawDate);
+    });
 
-        var dates = datesBrutes.map(function(rawDate) {
-            return formatDate(rawDate);
-        });
- {% if chart_type == 'price' %}
-        var prices = Object.values(historyData['Close']);
+    {% if chart_type == 'price' %}
+    // Extraction des prix de clôture
+    var prices = Object.values(historyData['Close']);
 
+    // Création du graphique des prix
+    Plotly.newPlot('price-chart', [{
+        x: dates,
+        y: prices,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Stock price',
+        line: {color: 'rgba(25, 120, 220, 1)'}
+    }]);
 
-        Plotly.newPlot('price-chart', [{
-            x: dates,
-            y: prices,
-            type: 'scatter',
-            mode: 'lines',
-            name: 'Stock price',
-            line: {color: 'rgba(25, 120, 220, 1)'}
-        }]);
     {% elif chart_type == 'macd' %}
+    // Extraction des données MACD
     var macdData = {{ macd_data|safe }};
     var macdValues = macdData.map(function(data) {
         return data.MACD;
     });
-
     var signalValues = macdData.map(function(data) {
         return data.signal;
     });
 
+    // Extraction des signaux d'achat et de vente
     var buySignals = {{ Buy|safe }};
     var sellSignals = {{ Sell|safe }};
 
-
+    // Création du graphique MACD et des signaux
     Plotly.newPlot('macd-signal-chart', [{
         x: dates,
         y: macdValues,
@@ -106,11 +113,13 @@ document.addEventListener("DOMContentLoaded", function() {
             size: 10
         }
     }]);
- {% elif chart_type == 'ratio' %}
+
+    {% elif chart_type == 'ratio' %}
+    // Extraction des données de ratio
     var ratioData = {{ history.ratio.to_json|safe }};
     var ratioValues = Object.values(ratioData);
 
-
+    // Création du graphique des ratios
     var ratioChart = [{
         x: dates,
         y: ratioValues,
@@ -120,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function() {
         line: {color: 'rgba(255, 0, 0, 1)'}
     }];
 
-
+    // Ajout des graphiques supplémentaires (percentiles)
     var additionalGraphData = [
         {
             x: dates,
@@ -140,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     ];
 
+    // Création du graphique final en combinant les données des ratios et les graphiques supplémentaires
     Plotly.newPlot('ratio-chart', ratioChart.concat(additionalGraphData));
     {% endif %}
 });
