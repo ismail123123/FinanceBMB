@@ -11,10 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -103,13 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "middlewares.JWTAuthenticationMiddleware",
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ),
-}
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -130,13 +123,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static', ]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "portfolio"
 LOGOUT_REDIRECT_URL = "home"
 
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'financebmb123@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'  # Adresse du serveur SMTP
+EMAIL_PORT = 587  # Port SMTP (587 pour TLS)
+EMAIL_USE_TLS = True  # Utiliser TLS pour la connexion SMTP
+EMAIL_HOST_USER = 'financebmb123@gmail.com'  # Votre adresse e-mail
 EMAIL_HOST_PASSWORD = 'financebmb*123!'
