@@ -135,8 +135,8 @@ LOGOUT_REDIRECT_URL = "home"
 
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Adresse du serveur SMTP
-EMAIL_PORT = 587  # Port SMTP (587 pour TLS)
-EMAIL_USE_TLS = True  # Utiliser TLS pour la connexion SMTP
-EMAIL_HOST_USER = 'financebmb123@gmail.com'  # Votre adresse e-mail
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'financebmb123@gmail.com'
 EMAIL_HOST_PASSWORD = 'financebmb*123!'

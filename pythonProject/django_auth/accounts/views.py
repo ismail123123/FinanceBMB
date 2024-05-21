@@ -33,7 +33,7 @@ $ pip install google-generativeai
 
 import google.generativeai as genai
 
-# Moved configuration outside of the view function for better organization
+
 genai.configure(api_key="AIzaSyA8anLet7yihU2HHOxpp8KP0T2WliU7l_Y")
 
 generation_config = {
@@ -66,15 +66,15 @@ model = genai.GenerativeModel(
     safety_settings=safety_settings
 )
 
-# Global variable to store the conversation (optional, can be initialized in the view)
+
 current_convo = None
 def chatbot(request):
-    global current_convo  # Access the global variable
+    global current_convo
 
     bot_responses = request.session.get('bot_responses', [])
 
-    # Show loader on initial page load (assuming 'loading' flag is set in your template context)
-    loading = request.GET.get('loading', False)  # Access loading flag from URL query string
+
+    loading = request.GET.get('loading', False)
 
     if request.method == 'POST' and 'new-chat' in request.POST:
         bot_responses.clear()
@@ -89,17 +89,17 @@ def chatbot(request):
             }
         ])
         request.session['bot_responses'] = bot_responses
-        return redirect('chatbot')  # assuming you have a URL pattern named 'chatbot'
+        return redirect('chatbot')
 
     if request.method == 'POST':
         user_input = request.POST.get('user-input')
 
         if user_input:
-            # Show loader before sending message
-            request.session['loading'] = True  # Set loading flag in session
+
+            request.session['loading'] = True
 
             if current_convo is None:
-                # Initialize current_convo if it's None
+
                 current_convo = model.start_chat(history=[
                     {
                         "role": "user",
@@ -111,17 +111,17 @@ def chatbot(request):
                     }
                 ])
 
-            # Send message and update conversation (consider error handling)
+
             current_convo.send_message(user_input)
             bot_response = current_convo.last.text
             bot_responses.append(user_input)
             bot_responses.append(bot_response)
 
-            # Update bot_responses in the session
+
             request.session['bot_responses'] = bot_responses
 
-            # Hide loader after receiving response
-            request.session['loading'] = False  # Clear loading flag in session
+
+            request.session['loading'] = False
 
     return render(request, 'chatbot.html', {'bot_responses': bot_responses, 'loading': loading})
 
