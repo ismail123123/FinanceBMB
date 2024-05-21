@@ -1,14 +1,9 @@
-{% extends "base.html" %}
-
-{% block title %}Sign Up{% endblock %}
-
-{% block content %}
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up Form</title>
+    <title>Créer un compte</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -103,22 +98,22 @@
     </style>
 </head>
 <body>
-    <div class="container">
+
 
         <div class="signup-form">
-            <h2>Sign Up</h2>
+            <h2>Créer un compte</h2>
             <form method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     {{ form.as_p }}
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                <button type="submit" class="btn btn-primary btn-block">Créer un compte</button>
             </form>
             <div class="login-link">
-                Already have an account? <a href="{% url 'login' %}">Login</a>
+                Vous avez déjà un compte ? <a href="{% url 'login' %}">Se connecter</a>
             </div>
         </div>
-    </div>
+
 </body>
 </html>
-{% endblock %}
+
