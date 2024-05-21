@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-20">
             <div class="card">
                 <div class="card-header">
                     <h2>{{ company.info.name }} ({{ company.info.symbol }})</h2>
@@ -22,11 +22,6 @@
     </div>
 </div>
 
-<div class="affichage-liens text-center">
-    <a href="{% url 'home' %}">Accueil</a>
-    <a href="{% url 'portfolio' %}">Portfolio</a>
-    <a href="{% url 'search_company' %}">Retour</a>
-</div>
 
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>

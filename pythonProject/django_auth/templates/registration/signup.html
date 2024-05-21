@@ -2,14 +2,123 @@
 
 {% block title %}Sign Up{% endblock %}
 
-
 {% block content %}
-<h2 class="text-center mb-4">Sign up</h2>
-<form method="post">
-  {% csrf_token %}
-  <div class="form-group">
-    {{ form.as_p }}
-  </div>
-  <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .signup-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            min-height: 400px; /* Adjust this value to change the minimum height of the form */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .signup-form h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .signup-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .signup-form input[type="text"],
+        .signup-form input[type="email"],
+        .signup-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .signup-form button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            cursor: pointer;
+        }
+
+        .signup-form button[type="submit"]:hover {
+            background: linear-gradient(to right, #5a67d8, #6b46c1);
+        }
+
+        .signup-form a {
+            display: block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .signup-form a:hover {
+            text-decoration: underline;
+        }
+
+        .signup-form .login-link {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="signup-form">
+            <h2>Sign Up</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+            </form>
+            <div class="login-link">
+                Already have an account? <a href="{% url 'login' %}">Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
 {% endblock %}

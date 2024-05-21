@@ -1,27 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-    {% if user.is_authenticated %}
-        <h2>Quelle compagnie cherchez-vous?</h2>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <label for="chart-type">Choisissez le type de graphique:</label>
-            <select name="chart-type" id="chart-type">
-                <option value="price">Prix</option>
-                <option value="macd">MACD et Signal</option>
-                <option value="ratio">Ratio</option>
-            </select>
-            <button type="submit" class="bouton-deco">Chercher</button>
-        </form>
-
-        <div class="affichage-liens">
-            <a href="{% url 'home' %}">Accueil</a>
-            <a href="{% url 'portfolio' %}">Portfolio</a>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="search-form p-4">
+                {% if user.is_authenticated %}
+                    <h2 class="mb-4">Quelle compagnie cherchez-vous?</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.company_name.label_tag }} {{ form.company_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="chart-type">Choisissez le type de graphique:</label>
+                            <select class="form-select" name="chart-type" id="chart-type">
+                                <option value="price">Prix</option>
+                                <option value="macd">MACD et Signal</option>
+                                <option value="ratio">Ratio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Chercher</button>
+                    </form>
+                {% else %}
+                    <p>Vous n'êtes pas connecté</p>
+                    <p><a class="btn btn-primary" href="{% url 'signup' %}">Créer un compte</a></p>
+                    <p><a class="btn btn-secondary" href="{% url 'login' %}">Se connecter</a></p>
+                {% endif %}
+            </div>
         </div>
-
-    {% else %}
-        <p>Vous n'êtes pas connecté</p>
-        <p><a target="_blank" href="{% url 'signup' %}">Créer un compte</a></p>
-        <p><a target="_blank" href="{% url 'login' %}">Se connecter</a></p>
-    {% endif %}
+    </div>
+</div>
 {% endblock %}

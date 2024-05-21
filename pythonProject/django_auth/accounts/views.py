@@ -31,16 +31,16 @@ At the command line, only need to run once to install the package via pip:
 $ pip install google-generativeai
 """
 
-
 import google.generativeai as genai
 
+# Moved configuration outside of the view function for better organization
 genai.configure(api_key="AIzaSyA8anLet7yihU2HHOxpp8KP0T2WliU7l_Y")
 
 generation_config = {
     "temperature": 1,
     "top_p": 0.95,
     "top_k": 0,
-    "max_output_tokens": 20000,
+    "max_output_tokens": 8650,
 }
 safety_settings = [
     {
@@ -66,32 +66,64 @@ model = genai.GenerativeModel(
     safety_settings=safety_settings
 )
 
-# Démarrage de la conversation - vous pouvez initialiser avec un message différent
-convo = model.start_chat(history=[
-    {
-        "role": "user",
-        "parts": ["Bonjour!"]
-    },
-    {
-        "role": "model",
-        "parts": ["Salut! Comment puis-je vous aider aujourd'hui ?"]
-    }
-])
-
-
+# Global variable to store the conversation (optional, can be initialized in the view)
+current_convo = None
 def chatbot(request):
-    global bot_responses  # Accéder à la variable globale
-    bot_responses = []
+    global current_convo  # Access the global variable
+
+    bot_responses = request.session.get('bot_responses', [])
+
+    # Show loader on initial page load (assuming 'loading' flag is set in your template context)
+    loading = request.GET.get('loading', False)  # Access loading flag from URL query string
+
+    if request.method == 'POST' and 'new-chat' in request.POST:
+        bot_responses.clear()
+        current_convo = model.start_chat(history=[
+            {
+                "role": "user",
+                "parts": ["Bonjour!"]
+            },
+            {
+                "role": "model",
+                "parts": ["Salut! Comment puis-je vous aider aujourd'hui ?"]
+            }
+        ])
+        request.session['bot_responses'] = bot_responses
+        return redirect('chatbot')  # assuming you have a URL pattern named 'chatbot'
+
     if request.method == 'POST':
-        user_input = request.POST.get('user_input')
-        convo.send_message(user_input)
+        user_input = request.POST.get('user-input')
 
-        bot_response = convo.last.text
-        bot_responses.append(bot_response)
+        if user_input:
+            # Show loader before sending message
+            request.session['loading'] = True  # Set loading flag in session
 
-        return render(request, 'chatbot.html', {'bot_response': bot_response, 'bot_responses': bot_responses})
-    else:
-        return render(request, 'chatbot.html')
+            if current_convo is None:
+                # Initialize current_convo if it's None
+                current_convo = model.start_chat(history=[
+                    {
+                        "role": "user",
+                        "parts": ["Bonjour!"]
+                    },
+                    {
+                        "role": "model",
+                        "parts": ["Salut! Comment puis-je vous aider aujourd'hui ?"]
+                    }
+                ])
+
+            # Send message and update conversation (consider error handling)
+            current_convo.send_message(user_input)
+            bot_response = current_convo.last.text
+            bot_responses.append(user_input)
+            bot_responses.append(bot_response)
+
+            # Update bot_responses in the session
+            request.session['bot_responses'] = bot_responses
+
+            # Hide loader after receiving response
+            request.session['loading'] = False  # Clear loading flag in session
+
+    return render(request, 'chatbot.html', {'bot_responses': bot_responses, 'loading': loading})
 
 class UserCreationFormWithEmail(UserCreationForm):
     email = forms.EmailField(required=True)

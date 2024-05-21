@@ -1,74 +1,86 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #3b2170;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Se connecter</title>
+    <style>
+        body.login-page {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-    .login-form {
-        width: 300px;
-        padding: 20px;
-        background-color: #2009c2;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(72, 17, 17, 0.1);
-        margin: 50px auto;
-    }
+        .login-form {
+            width: 100%;
+            max-width: 360px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-    .login-form h2 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+        .login-form h1 {
+            margin-bottom: 24px;
+            font-size: 24px;
+            color: #333333;
+        }
 
-    .login-form input[type="text"],
-    .login-form input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #851616;
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 16px;
-    }
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
-    .login-form input[type="submit"] {
-        width: 100%;
-        padding: 10px;
-        background-color: #4CAF50;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        .login-form input[type="submit"] {
+            width: 100%;
+            background-color: #764ba2;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-    .login-form input[type="submit"]:hover {
-        background-color: #45a049;
-    }
+        .login-form input[type="submit"]:hover {
+            background-color: #667eea;
+        }
 
-    .login-form p {
-        text-align: center;
-        margin-top: 10px;
-    }
+        .login-form a {
+            color: #764ba2;
+            text-decoration: none;
+            display: block;
+            margin-top: 10px;
+        }
 
-    .login-form p a {
-        color: #4CAF50;
-        text-decoration: none;
-    }
-
-    .login-form p a:hover {
-        text-decoration: underline;
-    }
-</style>
+        .login-form a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body>
+<body class="login-page">
   <div class="login-form">
-    <h2>Log In</h2>
+    <h1>Se connecter</h1>
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Log In">
+      <input type="text" name="username" placeholder="Nom d'utilisateur" required>
+      <input type="password" name="password" placeholder="Mot de passe" required>
+      <input type="submit" value="Se connecter">
     </form>
-      <p> <a href="{% url 'signup' %}">Register</a></p>
-    <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+    <a href="{% url 'signup' %}">Créer un compte</a>
+
   </div>
 </body>
 </html>
