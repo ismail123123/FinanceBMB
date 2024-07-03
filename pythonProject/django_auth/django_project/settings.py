@@ -79,7 +79,7 @@ DATABASES = {
         'NAME': 'INFO_UTILISATEUR',
         'USER': 'admin',
         'PASSWORD': 'Hiba1930.',
-        'HOST': 'aws1.ct8ckauowp16.us-east-2.rds.amazonaws.com',
+        'HOST': '',
         'PORT': 3306
 
     }
